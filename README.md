@@ -87,6 +87,18 @@ La página de inicio presenta la interfaz de autenticación donde los usuarios p
 - **Validación**: Mensajes de error y confirmación para guiar al usuario
 - **Diseño Responsivo**: Interfaz adaptable a diferentes tamaños de pantalla
 
+### Página de Registro
+La página de registro permite a los nuevos usuarios crear una cuenta en el sistema FeelBack. Presenta un formulario claro y estructurado que solicita la información necesaria para establecer una nueva cuenta de usuario con todas las validaciones correspondientes.
+
+![Página registro](./img/pagina_registro_cuenta_nueva.png)
+
+**Componentes principales:**
+- **Formulario de Registro**: Campos específicos para crear una cuenta nueva (nombre, email, contraseña)
+- **Validación de Datos**: Verificación en tiempo real de formato de email y fortaleza de contraseña
+- **Términos y Condiciones**: Checkbox para aceptar los términos de uso del servicio
+- **Botón de Creación**: Acción principal para completar el proceso de registro
+- **Enlace de Retorno**: Opción para volver al formulario de inicio de sesión
+
 ### Página de Interacción
 La página principal de la aplicación presenta una interfaz tipo chat donde los usuarios pueden ingresar sus comentarios y recibir análisis de sentimientos en tiempo real. El diseño intuitivo permite una experiencia de usuario fluida y natural.
 
@@ -95,8 +107,23 @@ La página principal de la aplicación presenta una interfaz tipo chat donde los
 **Componentes principales:**
 - **Área de Chat**: Interfaz conversacional para ingresar comentarios y ver respuestas
 - **Panel de Resultados**: Muestra la clasificación del sentimiento (positivo, negativo, neutral)
-- **Historial de Análisis**: Lista cronológica de análisis previos del usuario
+- **Historial de Análisis**: Opción para acceder a lista cronológica de análisis previos del usuario
 - **Indicadores Visuales**: Colores y iconos que representan cada tipo de sentimiento
 - **Campo de Entrada**: Área de texto para escribir comentarios a analizar
 - **Botón de Análisis**: Envía el texto al modelo de PyTorch para su procesamiento
 - **Opciones de Usuario**: Navegación y logout para gestión de sesión
+
+
+### Página de Historial
+La página de historial proporciona a los usuarios una vista completa de todos sus análisis de sentimientos previos. Esta interfaz permite revisar el progreso temporal y las tendencias en los análisis realizados, facilitando el seguimiento de la evolución de los comentarios y su clasificación emocional.
+
+![Página historial](./img/pagina_historial.png)
+
+**Componentes principales:**
+- **Lista de Análisis**: Registro de todos los comentarios analizados por el usuario
+- **Clasificación Visual**: Indicadores claros del sentimiento detectado (positivo, negativo, neutral)
+- **Fecha y Hora**: Timestamp preciso de cada análisis realizado
+- **Texto Original**: Muestra completa del comentario que fue analizado
+- **Filtros de Búsqueda**: Herramientas para filtrar análisis por fecha o tipo de sentimiento
+- **Paginación**: Navegación eficiente para grandes volúmenes de datos históricos
+- **Opciones de Exportación**: Posibilidad de descargar el historial en formato CSV

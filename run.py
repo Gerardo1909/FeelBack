@@ -1,13 +1,7 @@
-from flask import Flask, render_template
+import os 
+from app import create_app
 
-app = Flask(__name__, 
-            template_folder='app/templates',
-            static_folder='app/static')
-
-@app.route('/')
-def home():
-    return render_template('login.html')
-
+app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run()

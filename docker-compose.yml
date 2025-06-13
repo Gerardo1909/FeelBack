@@ -1,7 +1,33 @@
 version: '3.8'
 
 services:
-  flask-app:
-    build: .
+  postgres:
+    image: postgres:15
+    container_name: feelback_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-feelback_db}
+      POSTGRES_USER: ${POSTGRES_USER:-feelback_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-feelback_password}
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5000:5000"
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./app/db/database_schema.sql:/docker-entrypoint-initdb.d/database_schema.sql
+    networks:
+      - feelback_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-feelback_user} -d ${POSTGRES_DB:-feelback_db}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  feelback_network:
+    driver: bridge
+

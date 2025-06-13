@@ -6,9 +6,9 @@ class Config:
     load_dotenv()  # Carga las variables de entorno desde un archivo .env
 
     # Configuracion de la base de datos
-    #SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///default.db')
-    #SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-    #SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_COMMIT_ON_TEARDOWN = True
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
     @staticmethod
@@ -21,7 +21,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     HOST = '0.0.0.0'
     PORT = 5000
-    #SQLALCHEMY_ECHO = True  # Muestra las consultas SQL en la consola
+    SQLALCHEMY_ECHO = True  # Muestra las consultas SQL en la consola
 
 
 class TestingConfig(Config):

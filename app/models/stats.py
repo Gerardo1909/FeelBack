@@ -4,8 +4,7 @@ Stats Model - Modelo de estadísticas para FeelBack
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-
-db = SQLAlchemy()
+from app import db
 
 class Stats(db.Model):
     """Modelo para la tabla stats"""

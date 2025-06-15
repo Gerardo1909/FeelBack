@@ -14,6 +14,7 @@ def create_app(config_name='default'):
     
     # Cargar la configuración de la aplicación
     app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
     
     # Inicializar la base de datos
     db.init_app(app)

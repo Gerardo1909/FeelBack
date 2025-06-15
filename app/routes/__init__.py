@@ -6,4 +6,4 @@ main = Blueprint('main', __name__,
                  static_folder='../../static')
 
 
-from app.routes import login
+from app.routes import login, register

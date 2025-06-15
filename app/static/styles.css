@@ -118,6 +118,83 @@ body {
     text-decoration: underline;
 }
 
+/* Flash Messages */
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-message {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.flash-success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.flash-error {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+.flash-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+.flash-warning {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+/* Form Input Styles for Flask-WTF */
+.form-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 25px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fff;
+    color: #333;
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+    font-weight: 400;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #6b7280;
+    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.1);
+}
+
+/* Error Messages */
+.error-messages {
+    margin-top: 5px;
+}
+
+.error {
+    color: #ef4444;
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 2px;
+}
+
+.form-input.has-error {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
 /* Responsive Design */
 @media (max-width: 480px) {
     body {

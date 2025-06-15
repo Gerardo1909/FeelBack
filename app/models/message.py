@@ -5,8 +5,7 @@ Message Model - Modelo de mensajes para FeelBack
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-
-db = SQLAlchemy()
+from app import db
 
 class Message(db.Model):
     """Modelo para la tabla messages"""

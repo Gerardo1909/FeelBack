@@ -3,11 +3,9 @@ Modelo de usuario para FeelBack
 """
 
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
-
-db = SQLAlchemy()
+from app import db
 
 class User(db.Model):
     """Modelo para la tabla users"""

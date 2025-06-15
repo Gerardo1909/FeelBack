@@ -2,7 +2,6 @@
 Sentiment Model - Modelo de sentimientos para FeelBack
 """
 
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import CheckConstraint
 from sqlalchemy.orm import relationship
 from app import db

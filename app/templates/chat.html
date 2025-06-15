@@ -1,1 +1,12 @@
-<!-- chat.html -->
+{% extends "base.html" %}
+
+{% block title %}Feelback - Chat{% endblock %}
+
+{% block nav_buttons %}
+    <a href="{{ url_for('main.history') }}" class="nav-btn">Ver historial</a>
+    <a href="{{ url_for('main.logout') }}" class="nav-btn">Cerrar Sesión</a>
+    <a href="{{ url_for('main.home') }}" class="nav-btn">Volver a inicio</a>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

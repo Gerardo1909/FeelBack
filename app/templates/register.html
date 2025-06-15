@@ -1,1 +1,113 @@
-<!-- register.html -->
+{% extends "base.html" %}
+
+{% block title %}FeelBack - Registro{% endblock %}
+
+{% block nav_buttons %}
+<a href="{{ url_for('main.home') }}" class="nav-btn">Volver a la página principal</a>
+{% endblock %}
+
+{% block content %}
+<section class="register-section">
+    <div class="register-container">
+        <div class="register-form-wrapper">
+            <h1 class="register-title">Crear una nueva cuenta</h1>
+            
+            <form class="register-form" method="POST" action="{{ url_for('main.register') }}">
+                {{ form.hidden_tag() if form }}
+                
+                <div class="form-group">
+                    {% if form %}
+                        {{ form.username(class="form-input", placeholder="Nombre de usuario") }}
+                        {% if form.username.errors %}
+                            <div class="error-messages">
+                                {% for error in form.username.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <input type="text" name="username" class="form-input" placeholder="Nombre de usuario" required>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {% if form %}
+                        {{ form.email(class="form-input", placeholder="Correo electrónico") }}
+                        {% if form.email.errors %}
+                            <div class="error-messages">
+                                {% for error in form.email.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <input type="email" name="email" class="form-input" placeholder="Correo electrónico" required>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {% if form %}
+                        {{ form.password(class="form-input", placeholder="Contraseña") }}
+                        {% if form.password.errors %}
+                            <div class="error-messages">
+                                {% for error in form.password.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <input type="password" name="password" class="form-input" placeholder="Contraseña" required>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    {% if form %}
+                        {{ form.confirm_password(class="form-input", placeholder="Confirmar contraseña") }}
+                        {% if form.confirm_password.errors %}
+                            <div class="error-messages">
+                                {% for error in form.confirm_password.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <input type="password" name="confirm_password" class="form-input" placeholder="Confirmar contraseña" required>
+                    {% endif %}
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-container">
+                        <input type="checkbox" name="terms" required>
+                        <span class="checkmark"></span>
+                        <span class="checkbox-text">
+                            Acepto los <a href="#" class="terms-link">términos y condiciones</a>
+                        </span>
+                    </label>
+                </div>
+
+                {% if form %}
+                    {{ form.submit(class="btn-register", value="Registrar") }}
+                {% else %}
+                    <button type="submit" class="btn-register">Registrar</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+    
+    <!-- Sección decorativa inferior -->
+    <div class="register-bottom">
+        <div class="gradient-section"></div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="register-footer">
+    <div class="footer-links">
+        <a href="#" class="footer-link">Políticas de privacidad</a>
+        <a href="#" class="footer-link">Centro de ayuda</a>
+    </div>
+    <div class="footer-copyright">
+        <p>© 2025 FeelBack. Todos los derechos reservados.</p>
+    </div>
+</footer>
+{% endblock %}

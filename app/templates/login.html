@@ -1,15 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FeelBack - Análisis de Sentimientos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-    <div class="container">
+{% extends "base.html" %}
+
+{% block title %}FeelBack - Iniciar Sesión{% endblock %}
+
+{% block nav_buttons %}
+<a href="{{ url_for('main.home') }}" class="nav-btn">Volver al inicio</a>
+<a href="{{ url_for('main.register') }}" class="nav-btn primary">Registrarse</a>
+{% endblock %}
+
+{% block content %}
+<section class="login-section">
+    <div class="login-container">
         <div class="login-card">
-            <h1 class="title">Entrá a FeelBack!</h1>
+            <h1 class="login-title">Entrá a FeelBack!</h1>
             
             <!-- Mostrar mensajes flash -->
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -51,12 +53,11 @@
                 </div>
                 
                 {{ form.submit(class="btn-login", value="Ingresar") }}
-            </form>
-            
-            <div class="register-link">
+            </form>            
+            <div class="login-register-link">
                 <a href="{{ url_for('main.register') }}">Registrar una cuenta nueva</a>
             </div>
         </div>
     </div>
-</body>
-</html>
+</section>
+{% endblock %}

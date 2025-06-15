@@ -11,13 +11,6 @@ class LoginForm(FlaskForm):
     password = PasswordField('Password', validators=[InputRequired()])
     submit = SubmitField('Login')
 
-
-@main.route('/')
-def index():
-    """Ruta principal que redirije al login."""
-    return redirect(url_for('main.login'))
-
-
 @main.route('/login', methods=['GET', 'POST'])
 def login():
     """Ruta de login."""
@@ -36,7 +29,6 @@ def login():
                 # Login exitoso
                 session['user_id'] = user.id
                 session['username'] = user.username
-                flash(f'Bienvenido, {user.username}!', 'success')
                 return redirect(url_for('main.chat')) 
             else:
                 flash('Usuario o contraseña incorrectos', 'error')

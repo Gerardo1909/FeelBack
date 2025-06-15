@@ -24,18 +24,11 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.username}>'
     
-    @property
-    def password(self):
-        """No se debe permitir acceder directamente a la contraseña"""
-        raise AttributeError("La contraseña no se puede leer directamente.")
-    
-    @password.setter
-    def password(self, password):
-        """Genera un hash de la contraseña al establecerla"""
+    def set_password(self, password):
+        """Establece la contraseña hasheada"""
         self.password = generate_password_hash(password)
         
     def verify_password(self, password):
         """Verifica la contraseña ingresada contra el hash almacenado"""
         return check_password_hash(self.password, password)
-    
 

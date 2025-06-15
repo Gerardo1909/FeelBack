@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Feelback - Inicio{% endblock %}
+
+{% block nav_buttons %}
+{% if session.user_id %}
+    <a href="{{ url_for('main.chat') }}" class="nav-btn">Analizar</a>
+    <a href="{{ url_for('main.logout') }}" class="nav-btn">Cerrar Sesión</a>
+{% else %}
+    <a href="{{ url_for('main.login') }}" class="nav-btn">Iniciar Sesión</a>
+    <a href="{{ url_for('main.register') }}" class="nav-btn primary">Registrarse</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<section class="home-section">
+    <div class="home-container">
+        <div class="welcome-card">
+            <div class="card-content">                <!-- Lado izquierdo - Imagen -->
+                <div class="illustration-side">                    <img src="{{ url_for('static', filename='img/pagina_inicio_imagen.png') }}" 
+                         alt="Persona interactuando con robot FeelBack" 
+                         class="home-illustration"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display:none; color: white; text-align: center; font-size: 1.2rem;">
+                        <p>🤖</p>
+                        <p>Imagen no disponible</p>
+                        <small>{{ url_for('static', filename='img/pagina_inicio_imagen.png') }}</small>
+                    </div>
+                </div>
+                
+                <!-- Lado derecho - Texto y botón -->
+                <div class="text-side">
+                    <div class="welcome-content">
+                        <h1 class="welcome-title">
+                            Bienvenido<br>
+                            a <span class="brand-highlight">FeelBack</span>
+                        </h1>
+                        <p class="welcome-description">
+                            Un chat bot que te dice el tipo de sentimiento que detecta en tu mensaje.
+                        </p>
+                        <div class="action-button">
+                            {% if session.user_id %}
+                                <a href="{{ url_for('main.chat') }}" class="btn-start-chat">
+                                    Empezar a chatear ahora
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('main.register') }}" class="btn-start-chat">
+                                    Empezar a chatear ahora
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -76,9 +76,22 @@ docker-compose up
 ## 📷 Capturas de pantalla 
 
 ### Página de Inicio
-La página de inicio presenta la interfaz de autenticación donde los usuarios pueden registrarse o iniciar sesión. Incluye formularios intuitivos con validación de campos y un diseño limpio que facilita el acceso al sistema.
 
-![Página inicio](./img/pagina_inicio.png)
+La página de inicio da la bienvenida a los usuarios y presenta de forma clara el propósito de FeelBack. Incluye un diseño atractivo con colores cálidos, un área visual destacada y botones de acceso rápido para iniciar sesión o registrarse.
+
+![Página de inicio](./img/pagina_inicio.png)
+
+**Componentes principales:**
+- **Barra superior:** Muestra el nombre de la aplicación y accesos directos para iniciar sesión o registrarse.
+- **Mensaje de bienvenida:** Explica brevemente la funcionalidad del sistema y motiva al usuario a interactuar.
+- **Ilustración central:** Imagen representativa de la interacción entre un usuario y un robot, reforzando el enfoque en el análisis de sentimientos mediante IA.
+- **Botón de acción:** Permite comenzar a chatear y analizar sentimientos de inmediato.
+- **Diseño responsivo:** Adaptable a diferentes dispositivos para una experiencia de usuario óptima.
+
+### Página de Inicio de Sesión
+La página de inicio de sesión presenta la interfaz de autenticación donde los usuarios pueden registrarse o iniciar sesión. Incluye formularios intuitivos con validación de campos y un diseño limpio que facilita el acceso al sistema.
+
+![Página inicio](./img/pagina_login.png)
 
 **Componentes principales:**
 - **Formulario de Login**: Campos para email y contraseña con validación en tiempo real

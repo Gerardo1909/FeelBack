@@ -13,7 +13,7 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./app/db/database_schema.sql:/docker-entrypoint-initdb.d/database_schema.sql
+      - ./app/models/database_schema.sql:/docker-entrypoint-initdb.d/database_schema.sql
     networks:
       - feelback_network
     restart: unless-stopped

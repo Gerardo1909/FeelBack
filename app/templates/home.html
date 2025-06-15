@@ -16,8 +16,10 @@
 <section class="home-section">
     <div class="home-container">
         <div class="welcome-card">
-            <div class="card-content">                <!-- Lado izquierdo - Imagen -->
-                <div class="illustration-side">                    <img src="{{ url_for('static', filename='img/pagina_inicio_imagen.png') }}" 
+            <div class="card-content">                
+                <!-- Lado izquierdo - Imagen -->
+                <div class="illustration-side">                    
+                    <img src="{{ url_for('static', filename='img/pagina_inicio_imagen.png') }}" 
                          alt="Persona interactuando con robot FeelBack" 
                          class="home-illustration"
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
@@ -44,7 +46,7 @@
                                     Empezar a chatear ahora
                                 </a>
                             {% else %}
-                                <a href="{{ url_for('main.register') }}" class="btn-start-chat">
+                                <a href="{{ url_for('main.login') }}" class="btn-start-chat">
                                     Empezar a chatear ahora
                                 </a>
                             {% endif %}
@@ -55,4 +57,15 @@
         </div>
     </div>
 </section>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="footer-links">
+        <a href="#" class="footer-link">Políticas de privacidad</a>
+        <a href="#" class="footer-link">Centro de ayuda</a>
+    </div>
+    <div class="footer-copyright">
+        <p>© 2025 FeelBack. Todos los derechos reservados.</p>
+    </div>
+</footer>
 {% endblock %}

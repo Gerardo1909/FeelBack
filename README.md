@@ -30,22 +30,27 @@ El sistema incluye autenticación básica para que los usuarios puedan iniciar s
 ## 📚 Estructura del Proyecto
 
 ```bash
-sentiment_app/
+FeelBack/
 ├── app/
-│   ├── routes/           # Rutas de la API (login, registro, análisis, historial)
-│   ├── templates/        # HTMLs: login, registro, chat
-│   ├── static/           # CSS
-│   ├── model/            # Modelo PyTorch, inferencia y preprocesamiento
-│   ├── db/               # Conexión y lógica de base de datos
-│   └── utils/            # Autenticación y utilidades
-├── saved_models/         # Modelo entrenado (.pt)
-├── run.py                # Punto de entrada para la app Flask
-├── setup.py               
-├── .gitignore            
-├── requirements.txt      # Dependencias del proyecto
-├── Dockerfile            # Imagen Docker para Flask
-├── docker-compose.yml    # Servicio Flask + PostgreSQL
-└── README.md
+│   ├── config.py               # Configuración de la aplicación
+│   ├── __init__.py             # Inicio de la aplicación
+│   ├── routes/                 # Rutas de la API (login, registro, análisis, historial)
+│   ├── templates/              # HTMLs: login, registro, chat
+│   ├── static/                 # CSS y archivos estáticos
+│   ├── models/                 # Modelos de datos y lógica de negocio
+│   ├── sentiment_analyzer/     # Modelo Pytorch para análisis de sentimientos
+│   └── utils/                  # Autenticación y utilidades
+├── img/                        # Imágenes del proyecto
+├── migrations/                 # Migraciones de base de datos
+├── saved_models/               # Modelos entrenados (.pt)
+├── tests/                      # Pruebas unitarias
+├── .gitignore                  # Archivos ignorados por Git
+├── docker-compose.yml          # Servicio Flask + PostgreSQL
+├── Dockerfile                  # Imagen Docker para Flask
+├── README.md                   # Documentación del proyecto
+├── requirements.txt            # Dependencias del proyecto
+├── run.py                      # Punto de entrada para la app Flask
+└── setup.py                    # Configuración del paquete
 ````
 
 ## 📡 Endpoints de la API

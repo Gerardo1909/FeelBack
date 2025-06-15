@@ -18,7 +18,10 @@
     <!-- Navbar -->
     <nav class="navbar">
         <!-- Logo/Brand - siempre presente -->
-        <a href="{{ url_for('main.home') }}" class="navbar-brand">FeelBack</a>
+        <a href="{{ url_for('main.home') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="FeelBack Logo" class="navbar-logo">
+            FeelBack
+        </a>
         
         <!-- Menu dinámico - cada página define sus botones -->
         <div class="navbar-nav">

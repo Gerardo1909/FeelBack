@@ -3,12 +3,12 @@
 {% block title %}Feelback - Inicio{% endblock %}
 
 {% block nav_buttons %}
-{% if session.user_id %}
+{% if current_user.is_authenticated %}
     <a href="{{ url_for('main.chat') }}" class="nav-btn">Analizar</a>
-    <a href="{{ url_for('main.logout') }}" class="nav-btn">Cerrar Sesión</a>
+    <a href="{{ url_for('auth.logout') }}" class="nav-btn">Cerrar Sesión</a>
 {% else %}
-    <a href="{{ url_for('main.login') }}" class="nav-btn">Iniciar Sesión</a>
-    <a href="{{ url_for('main.register') }}" class="nav-btn primary">Registrarse</a>
+    <a href="{{ url_for('auth.login') }}" class="nav-btn">Iniciar Sesión</a>
+    <a href="{{ url_for('auth.register') }}" class="nav-btn primary">Registrarse</a>
 {% endif %}
 {% endblock %}
 
@@ -46,7 +46,7 @@
                                     Empezar a chatear ahora
                                 </a>
                             {% else %}
-                                <a href="{{ url_for('main.login') }}" class="btn-start-chat">
+                                <a href="{{ url_for('auth.login') }}" class="btn-start-chat">
                                     Empezar a chatear ahora
                                 </a>
                             {% endif %}

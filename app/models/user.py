@@ -5,9 +5,10 @@ Modelo de usuario para FeelBack
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
+from app import db, login_manager
+from flask_login import UserMixin
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     """Modelo para la tabla users"""
     __tablename__ = 'users'
     
@@ -31,4 +32,9 @@ class User(db.Model):
     def verify_password(self, password):
         """Verifica la contraseña ingresada contra el hash almacenado"""
         return check_password_hash(self.password, password)
+    
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 

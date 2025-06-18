@@ -12,7 +12,7 @@
         <div class="register-form-wrapper">
             <h1 class="register-title">Crear una nueva cuenta</h1>
             
-            <form class="register-form" method="POST" action="{{ url_for('main.register') }}">
+            <form class="register-form" method="POST" action="{{ url_for('auth.register') }}">
                 {{ form.hidden_tag() if form }}
                 
                 <div class="form-group">

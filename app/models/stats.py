@@ -13,6 +13,8 @@ class Stats(db.Model):
     positive = db.Column(db.Integer, default=0)
     negative = db.Column(db.Integer, default=0)
     neutral = db.Column(db.Integer, default=0)
+    liked = db.Column(db.Integer, default=0)
+    disliked = db.Column(db.Integer, default=0)
     
     # Relaciones
     user = relationship('User', back_populates='stats')

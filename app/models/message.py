@@ -14,6 +14,7 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     text = db.Column(db.Text, nullable=False)
     id_sentiment = db.Column(db.Integer, db.ForeignKey('sentiments.id'), nullable=False)
+    liked = db.Column(db.Boolean, default=None)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Relaciones

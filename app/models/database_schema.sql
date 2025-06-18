@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS messages (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     text TEXT NOT NULL,
+    liked BOOLEAN DEFAULT NULL,
     id_sentiment INTEGER NOT NULL REFERENCES sentiments(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -46,7 +47,9 @@ CREATE TABLE IF NOT EXISTS stats (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     positive INTEGER DEFAULT 0,
     negative INTEGER DEFAULT 0,
-    neutral INTEGER DEFAULT 0
+    neutral INTEGER DEFAULT 0,
+    liked INTEGER DEFAULT 0,
+    disliked INTEGER DEFAULT 0
 );
 
 -- ===========================================
@@ -80,11 +83,15 @@ BEGIN
         VALUES (NEW.user_id, 
                 CASE WHEN NEW.id_sentiment = 1 THEN 1 ELSE 0 END,
                 CASE WHEN NEW.id_sentiment = 3 THEN 1 ELSE 0 END,
-                CASE WHEN NEW.id_sentiment = 2 THEN 1 ELSE 0 END)
+                CASE WHEN NEW.id_sentiment = 2 THEN 1 ELSE 0 END,
+                CASE WHEN NEW.liked IS TRUE THEN 1 ELSE 0 END,
+                CASE WHEN NEW.liked IS FALSE THEN 1 ELSE 0 END)
         ON CONFLICT (user_id) DO UPDATE SET
             positive = stats.positive + CASE WHEN NEW.id_sentiment = 1 THEN 1 ELSE 0 END,
             negative = stats.negative + CASE WHEN NEW.id_sentiment = 3 THEN 1 ELSE 0 END,
-            neutral = stats.neutral + CASE WHEN NEW.id_sentiment = 2 THEN 1 ELSE 0 END;
+            neutral = stats.neutral + CASE WHEN NEW.id_sentiment = 2 THEN 1 ELSE 0 END, 
+            liked = stats.liked + CASE WHEN NEW.liked IS TRUE THEN 1 ELSE 0 END,
+            disliked = stats.disliked + CASE WHEN NEW.liked IS FALSE THEN 1 ELSE 0 END;
         RETURN NEW;
     END IF;
     
@@ -93,7 +100,9 @@ BEGIN
         UPDATE stats SET
             positive = GREATEST(0, positive - CASE WHEN OLD.id_sentiment = 1 THEN 1 ELSE 0 END),
             negative = GREATEST(0, negative - CASE WHEN OLD.id_sentiment = 3 THEN 1 ELSE 0 END),
-            neutral = GREATEST(0, neutral - CASE WHEN OLD.id_sentiment = 2 THEN 1 ELSE 0 END)
+            neutral = GREATEST(0, neutral - CASE WHEN OLD.id_sentiment = 2 THEN 1 ELSE 0 END),
+            liked = GREATEST(0, liked - CASE WHEN OLD.liked IS TRUE THEN 1 ELSE 0 END),
+            disliked = GREATEST(0, disliked - CASE WHEN OLD.liked IS FALSE THEN 1 ELSE 0 END)
         WHERE user_id = OLD.user_id;
         RETURN OLD;
     END IF;
@@ -112,8 +121,8 @@ CREATE TRIGGER trigger_update_stats
 CREATE OR REPLACE FUNCTION create_initial_stats()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO stats (user_id, positive, negative, neutral)
-    VALUES (NEW.id, 0, 0, 0);
+    INSERT INTO stats (user_id, positive, negative, neutral, liked, disliked)
+    VALUES (NEW.id, 0, 0, 0, 0, 0);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -134,39 +143,6 @@ INSERT INTO sentiments (id, description) VALUES
     (2, 'neutral'),
     (3, 'negative')
 ON CONFLICT (description) DO NOTHING;
-
--- ===========================================
--- 🔍 VISTAS ÚTILES
--- ===========================================
-
--- Vista para obtener mensajes con información completa
-CREATE OR REPLACE VIEW v_messages_complete AS
-SELECT 
-    m.id,
-    m.text,
-    m.created_at,
-    u.username,
-    u.email,
-    s.description as sentiment
-FROM messages m
-JOIN users u ON m.user_id = u.id
-JOIN sentiments s ON m.id_sentiment = s.id
-ORDER BY m.created_at DESC;
-
--- Vista para estadísticas de usuarios
-CREATE OR REPLACE VIEW v_user_stats AS
-SELECT 
-    u.id,
-    u.username,
-    u.email,
-    u.created_at as user_registered,
-    COALESCE(st.positive, 0) as positive_messages,
-    COALESCE(st.negative, 0) as negative_messages,
-    COALESCE(st.neutral, 0) as neutral_messages,
-    COALESCE(st.positive + st.negative + st.neutral, 0) as total_messages
-FROM users u
-LEFT JOIN stats st ON u.id = st.user_id
-ORDER BY total_messages DESC;
 
 -- ===========================================
 -- ✅ VERIFICACIÓN DEL ESQUEMA

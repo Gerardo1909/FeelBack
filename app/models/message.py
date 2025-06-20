@@ -15,7 +15,7 @@ class Message(db.Model):
     text = db.Column(db.Text, nullable=False)
     id_sentiment = db.Column(db.Integer, db.ForeignKey('sentiments.id'), nullable=False)
     liked = db.Column(db.Boolean, default=None)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.now())
     
     # Relaciones
     user = relationship('User', back_populates='messages')

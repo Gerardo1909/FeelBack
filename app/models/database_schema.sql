@@ -79,7 +79,7 @@ RETURNS TRIGGER AS $$
 BEGIN
     -- Si es un INSERT, incrementar contador
     IF TG_OP = 'INSERT' THEN
-        INSERT INTO stats (user_id, positive, negative, neutral)
+        INSERT INTO stats (user_id, positive, negative, neutral, liked, disliked)
         VALUES (NEW.user_id, 
                 CASE WHEN NEW.id_sentiment = 1 THEN 1 ELSE 0 END,
                 CASE WHEN NEW.id_sentiment = 3 THEN 1 ELSE 0 END,

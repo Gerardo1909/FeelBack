@@ -3,10 +3,79 @@
 {% block title %}Feelback - Chat{% endblock %}
 
 {% block nav_buttons %}
-    <a href="{{ url_for('main.history') }}" class="nav-btn">Ver historial</a>
-    <a href="{{ url_for('auth.logout') }}" class="nav-btn">Cerrar Sesión</a>
-    <a href="{{ url_for('main.home') }}" class="nav-btn">Volver a inicio</a>
+    <a href="{{ url_for('main.reset_chat', next=url_for('main.history')) }}" class="nav-btn">Ver historial</a>
+    <a href="{{ url_for('main.reset_chat', next=url_for('auth.logout')) }}" class="nav-btn">Cerrar Sesión</a>
+    <a href="{{ url_for('main.reset_chat', next=url_for('main.home')) }}" class="nav-btn">Volver a inicio</a>
 {% endblock %}
 
 {% block content %}
+
+<div class="chat-container">
+    <h2 class="chat-title">Ingresá un texto y obtené una clasificación de sentimientos</h2>
+    <p class="chat-subtitle">
+        Tené en cuenta que luego de que cierres este chat todos tus mensajes enviados junto
+        con su clasificación serán guardados en el <a href="{{ url_for('main.history') }}">historial</a>
+    </p>
+
+    <div class="chat-box" id="chat-box">
+        {% for item in history %}
+            <div class="chat-row user">
+                <div class="chat-bubble user-bubble">
+                    {{ item.message }}
+                    <span class="chat-timestamp">{{ item.timestamp }}</span>
+                </div>
+            </div>
+
+            <div class="chat-row bot">
+                <div class="chat-icon"></div>
+                <div class="chat-bubble bot-bubble">
+                    {{ item.response }}
+                    <span class="chat-timestamp">{{ item.timestamp }}</span>
+                </div>
+            </div>
+
+            <!-- Formulario de feedback separado, siempre visible -->
+            <div class="feedback-row">
+                <form method="POST" action="{{ url_for('main.get_feedback') }}" class="feedback-form">
+                    {{ feedback_form.hidden_tag() }}
+                    <input type="hidden" name="index" value="{{ loop.index0 }}">
+
+                    <button type="submit" name="like" value="true" class="feedback-btn like-btn" 
+                            {% if item.liked == true %}disabled{% endif %}></button>
+                    <button type="submit" name="dislike" value="true" class="feedback-btn dislike-btn"
+                            {% if item.liked == false %}disabled{% endif %}></button>
+                    
+                    <button type="button" class="feedback-btn help-btn">
+                        Quiero ayudar
+                    </button>
+                </form>
+
+                <!-- Área de feedback expandible -->
+                <div class="feedback-textarea-wrapper" id="feedback-{{ loop.index0 }}" style="display:none;">
+                    <form method="POST" action="{{ url_for('main.get_feedback') }}" class="feedback-text-form">
+                        {{ feedback_form.hidden_tag() }}
+                        <input type="hidden" name="index" value="{{ loop.index0 }}">
+                        {{ feedback_form.feedback(class="feedback-textarea", placeholder="Escribe tu comentario...") }}
+                        <button type="submit" class="feedback-submit-btn">Confirmar</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form method="POST" class="chat-input-form">
+        {{ form.hidden_tag() }}
+        {{ form.message(class="chat-input", placeholder="Escribí un mensaje...") }}
+        <div class="chat-actions">
+            <a href="{{ url_for('main.reset_chat') }}" class="chat-reset-btn" title="Limpiar chat"></a>
+            <button type="submit" class="chat-submit-btn">Analizar</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const chatBox = document.getElementById("chat-box");
+    chatBox.scrollTop = chatBox.scrollHeight;
+</script>
+
 {% endblock %}

@@ -2,7 +2,7 @@
 Rutas para el registro de usuarios
 """
 
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash
 from app.auth.forms.registerform import RegisterForm
 from app.auth import auth
 from app import db

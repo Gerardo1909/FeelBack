@@ -1,0 +1,73 @@
+/* FeelBack - Error Page Styles */
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: 2rem;
+    text-align: center;
+}
+
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    color: #ff6347;
+    opacity: 0.8;
+}
+
+.error-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #1e293b;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.error-action {
+    margin-top: 1.5rem;
+}
+
+.error-button {
+    background: linear-gradient(135deg, #ff6347, #ff7f50);
+    color: white;
+    padding: 0.8rem 1.8rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-block;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(255, 99, 71, 0.25);
+}
+
+.error-button:hover {
+    background: linear-gradient(135deg, #e53e3e, #fd7f6f);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 99, 71, 0.35);
+    color: white;
+    text-decoration: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .error-title {
+        font-size: 1.75rem;
+    }
+    
+    .error-message {
+        font-size: 1rem;
+    }
+    
+    .error-icon {
+        font-size: 3.5rem;
+    }
+}

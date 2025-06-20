@@ -8,13 +8,12 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.ico') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.ico') }}">
-    
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+      <!-- CSS Base -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     
     {% block extra_css %}{% endblock %}
 </head>
-<body>    
+<body class="{% block body_class %}{% endblock %}">    
     <!-- Navbar -->
     <nav class="navbar">
         <!-- Logo/Brand - siempre presente -->

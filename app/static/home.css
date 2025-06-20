@@ -1,0 +1,188 @@
+/* FeelBack - Home Page Styles */
+
+/* Home Page Styles */
+.home-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 71vh;
+    width: 190vh;
+    padding: 20px;
+    background-color: #f8fafc;
+}
+
+.home-container {
+    width: 100%;
+    max-width: 1000px;
+}
+
+.welcome-card {
+    background: #99a1b8;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    color: white;
+}
+
+.card-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    min-height: 450px;
+    gap: 0;
+}
+
+.illustration-side {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 30px;
+    background: transparent;
+}
+
+.home-illustration {
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+    border-radius: 12px;
+    display: block;
+    object-fit: contain;
+    filter: brightness(1.05) contrast(1.02);
+}
+
+.text-side {
+    padding: 40px 40px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.welcome-content {
+    max-width: 380px;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 16px;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+}
+
+.brand-highlight {
+    color: #ff6347;
+    font-weight: 700;
+}
+
+.welcome-description {
+    font-size: 1rem;
+    color: #0e1114;
+    margin-bottom: 28px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.action-button {
+    margin-bottom: 24px;
+}
+
+.btn-start-chat {
+    background: linear-gradient(135deg, #ff6347, #ff7f50);
+    color: white;
+    padding: 12px 28px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-block;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(255, 99, 71, 0.25);
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+}
+
+.btn-start-chat:hover {
+    color: white;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 99, 71, 0.35);
+    background: linear-gradient(135deg, #e53e3e, #fd7f6f);
+}
+
+/* Ícono decorativo mejorado */
+.decorative-icon {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #ff6347, #ff7f50);
+    border-radius: 50%;
+    position: relative;
+    margin-left: 16px;
+    vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(255, 99, 71, 0.25);
+}
+
+.decorative-icon::before {
+    content: '😊';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+}
+
+/* Responsive design for home page */
+@media (max-width: 968px) {
+    .card-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .text-side {
+        padding: 30px 25px;
+        text-align: center;
+    }
+    
+    .welcome-title {
+        font-size: 2rem;
+    }
+    
+    .home-illustration {
+        max-width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .illustration-side {
+        order: 1;
+        padding: 20px;
+    }
+    
+    .text-side {
+        order: 2;
+        padding: 24px 20px;
+        text-align: center;
+    }
+    
+    .welcome-title {
+        font-size: 1.875rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-title {
+        font-size: 1.625rem;
+    }
+    
+    .welcome-description {
+        font-size: 0.95rem;
+    }
+}

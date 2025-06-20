@@ -2,6 +2,10 @@
 
 {% block title %}Feelback - Historial{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='history.css') }}">
+{% endblock %}
+
 {% block nav_buttons %}
     <a href="{{ url_for('main.chat') }}" class="nav-btn">Volver al chat</a>
     <a href="{{ url_for('auth.logout') }}" class="nav-btn">Cerrar Sesión</a>

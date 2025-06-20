@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}FeelBack - Error{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='error.css') }}">
+{% endblock %}
+
+{% block nav_buttons %}
+<a href="{{ url_for('main.home') }}" class="nav-btn">Volver a Inicio</a>
+{% endblock %}
+
+{% block content %}
+<div class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h1 class="error-title">{{ error_title|default('Ha ocurrido un error') }}</h1>
+    <p class="error-message">{{ error_message|default('Lo sentimos, algo salió mal. Por favor, inténtalo de nuevo más tarde.') }}</p>
+    <div class="error-action">
+        <a href="{{ url_for('main.home') }}" class="error-button">Volver a la página principal</a>
+    </div>
+</div>
+{% endblock %}

@@ -2,6 +2,11 @@
 
 {% block title %}Feelback - Chat{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
+{% endblock %}
+
+
 {% block nav_buttons %}
     <a href="{{ url_for('main.reset_chat', next=url_for('main.history')) }}" class="nav-btn">Ver historial</a>
     <a href="{{ url_for('main.reset_chat', next=url_for('auth.logout')) }}" class="nav-btn">Cerrar Sesión</a>
@@ -11,26 +16,30 @@
 {% block content %}
 
 <div class="chat-container">
-    <h2 class="chat-title">Ingresá un texto y obtené una clasificación de sentimientos</h2>
-    <p class="chat-subtitle">
-        Tené en cuenta que luego de que cierres este chat todos tus mensajes enviados junto
-        con su clasificación serán guardados en el <a href="{{ url_for('main.history') }}">historial</a>
-    </p>
 
     <div class="chat-box" id="chat-box">
+
+        <h2 class="chat-title">Ingresá un texto y obtené una clasificación de sentimientos</h2>
+        <p class="chat-subtitle">
+            Tené en cuenta que luego de que cierres este chat todos tus mensajes enviados junto
+            con su clasificación serán guardados en el <a href="{{ url_for('main.history') }}" class="history-link">historial</a>
+        </p>
+
         {% for item in history %}
             <div class="chat-row user">
                 <div class="chat-bubble user-bubble">
                     {{ item.message }}
-                    <span class="chat-timestamp">{{ item.timestamp }}</span>
+                    <span class="chat-user-timestamp">{{ item.timestamp }}</span>
                 </div>
             </div>
 
             <div class="chat-row bot">
-                <div class="chat-icon"></div>
+                <div class="chat-icon">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="FeelBack Logo">
+                </div>
                 <div class="chat-bubble bot-bubble">
                     {{ item.response }}
-                    <span class="chat-timestamp">{{ item.timestamp }}</span>
+                    <span class="chat-bot-timestamp">{{ item.timestamp }}</span>
                 </div>
             </div>
 
@@ -62,20 +71,48 @@
             </div>
         {% endfor %}
     </div>
+</div>
 
+<div class="chat-controls-container">
     <form method="POST" class="chat-input-form">
         {{ form.hidden_tag() }}
         {{ form.message(class="chat-input", placeholder="Escribí un mensaje...") }}
         <div class="chat-actions">
             <a href="{{ url_for('main.reset_chat') }}" class="chat-reset-btn" title="Limpiar chat"></a>
-            <button type="submit" class="chat-submit-btn">Analizar</button>
+            <button type="submit" class="chat-submit-btn" title="Analizar">Analizar</button>
+            </button>
         </div>
     </form>
 </div>
 
-<script>
-    const chatBox = document.getElementById("chat-box");
-    chatBox.scrollTop = chatBox.scrollHeight;
+<script>    // Scroll automático al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatBox = document.getElementById("chat-box");
+        chatBox.scrollTop = chatBox.scrollHeight;
+        
+        // Añadir MutationObserver para detectar cambios en el chat y hacer scroll automático
+        const observer = new MutationObserver(function(mutations) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+        
+        observer.observe(chatBox, { childList: true, subtree: true });
+
+        // Expandir área de feedback al hacer clic en "Quiero ayudar"
+        const helpButtons = document.querySelectorAll('.help-btn');
+        helpButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('.feedback-row');
+                const feedbackArea = form.querySelector('.feedback-textarea-wrapper');
+                if (feedbackArea) {
+                    if (feedbackArea.style.display === 'none') {
+                        feedbackArea.style.display = 'block';
+                    } else {
+                        feedbackArea.style.display = 'none';
+                    }
+                }
+            });
+        });
+    });
 </script>
 
 {% endblock %}

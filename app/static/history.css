@@ -1,0 +1,180 @@
+/* FeelBack - History Page Styles */
+
+/* History section styles would go here */
+/* Since the history styles are not explicitly defined in the original CSS,
+   we'll create a basic structure that can be expanded later */
+
+.history-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.history-title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.history-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.history-header {
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #ff6347, #ff7f50);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-timestamp {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.history-content {
+    padding: 1.5rem;
+}
+
+.history-message {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.history-message:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.history-user-message {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.history-bot-message {
+    color: #555;
+}
+
+.history-sentiment {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-top: 0.5rem;
+}
+
+.history-sentiment.positive {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.history-sentiment.negative {
+    background-color: #fef2f2;
+    color: #991b1b;
+}
+
+.history-sentiment.neutral {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+.history-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+}
+
+.history-empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.history-empty-message {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.history-start-chat-btn {
+    background: linear-gradient(135deg, #ff6347, #ff7f50);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.history-start-chat-btn:hover {
+    background: linear-gradient(135deg, #e53e3e, #fd7f6f);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 99, 71, 0.25);
+    color: white;
+    text-decoration: none;
+}
+
+/* Pagination styles */
+.history-pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    gap: 0.5rem;
+}
+
+.history-page-btn {
+    background: white;
+    border: 1px solid #e5e7eb;
+    padding: 0.5rem 0.8rem;
+    border-radius: 8px;
+    color: #374151;
+    transition: all 0.2s ease;
+}
+
+.history-page-btn:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.history-page-btn.active {
+    background: #ff6347;
+    color: white;
+    border-color: #ff6347;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .history-container {
+        padding: 1.5rem 1rem;
+    }
+    
+    .history-card {
+        margin-bottom: 1rem;
+    }
+    
+    .history-header {
+        padding: 0.8rem 1.2rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .history-timestamp {
+        margin-top: 0.3rem;
+    }
+    
+    .history-content {
+        padding: 1.2rem;
+    }
+}

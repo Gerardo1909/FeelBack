@@ -2,6 +2,10 @@
 
 {% block title %}Feelback - Inicio{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+{% endblock %}
+
 {% block nav_buttons %}
 {% if current_user.is_authenticated %}
     <a href="{{ url_for('main.chat') }}" class="nav-btn">Analizar</a>
@@ -58,14 +62,4 @@
     </div>
 </section>
 
-<!-- Footer -->
-<footer class="main-footer">
-    <div class="footer-links">
-        <a href="#" class="footer-link">Políticas de privacidad</a>
-        <a href="#" class="footer-link">Centro de ayuda</a>
-    </div>
-    <div class="footer-copyright">
-        <p>© 2025 FeelBack. Todos los derechos reservados.</p>
-    </div>
-</footer>
 {% endblock %}

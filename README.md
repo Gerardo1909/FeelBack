@@ -90,30 +90,6 @@ FeelBack/
 └── setup.py                    # Configuración del paquete
 ````
 
-## 📡 Endpoints de la API
-
-### Rutas de Autenticación
-
-| Endpoint           | Método | Descripción                                 |
-| ------------------ | ------ | ------------------------------------------- |
-| `/auth/login`      | GET    | Muestra el formulario de inicio de sesión   |
-| `/auth/login`      | POST   | Procesa el inicio de sesión                 |
-| `/auth/register`   | GET    | Muestra el formulario de registro           |
-| `/auth/register`   | POST   | Procesa el registro de un nuevo usuario     |
-| `/auth/logout`     | GET    | Cierra la sesión del usuario actual         |
-
-### Rutas Principales
-
-| Endpoint           | Método | Descripción                                       |
-| ------------------ | ------ | ------------------------------------------------- |
-| `/`                | GET    | Página principal/inicio                           |
-| `/chat`            | GET    | Muestra la interfaz de análisis de sentimientos   |
-| `/chat`            | POST   | Analiza el texto y muestra el resultado           |
-| `/feedback`        | POST   | Procesa retroalimentación sobre un análisis       |
-| `/history`         | GET    | Muestra el historial de análisis del usuario      |
-| `/reset-chat`      | GET    | Reinicia la sesión del chat                       |
-
-
 ## 🐳 Dockerización
 
 El proyecto incluye archivos de configuración para contenerizar la aplicación:
@@ -183,15 +159,16 @@ La página principal de la aplicación presenta una interfaz tipo chat moderna i
 
 
 ### Página de Historial
-La página de historial proporciona a los usuarios una vista completa de todos sus análisis de sentimientos previos. Esta interfaz permite revisar el progreso temporal y las tendencias en los análisis realizados, facilitando el seguimiento de la evolución de los comentarios y su clasificación emocional.
+La página de historial proporciona a los usuarios una vista completa de todos sus análisis de sentimientos previos. Implementada con su propia hoja de estilos modular `history.css`, ofrece una interfaz intuitiva y organizada que facilita el seguimiento de la evolución de los comentarios y su clasificación emocional.
 
 ![Página historial](./img/pagina_historial.png)
 
 **Componentes principales:**
-- **Lista de Análisis**: Registro de todos los comentarios analizados por el usuario
-- **Clasificación Visual**: Indicadores claros del sentimiento detectado (positivo, negativo, neutral)
-- **Fecha y Hora**: Timestamp preciso de cada análisis realizado
-- **Texto Original**: Muestra completa del comentario que fue analizado
-- **Filtros de Búsqueda**: Herramientas para filtrar análisis por fecha o tipo de sentimiento
-- **Paginación**: Navegación eficiente para grandes volúmenes de datos históricos
-- **Opciones de Exportación**: Posibilidad de descargar el historial en formato CSV
+- **Lista de Análisis**: Registro detallado de todos los comentarios analizados por el usuario, con una presentación clara y estructurada.
+- **Clasificación Visual**: Indicadores gráficos que muestran el sentimiento detectado (positivo, negativo, neutral) con colores distintivos para facilitar la interpretación.
+- **Fecha y Hora**: Timestamp preciso que permite identificar cuándo se realizó cada análisis.
+- **Texto Original**: Visualización completa del comentario analizado, manteniendo la fidelidad al texto ingresado por el usuario.
+- **Filtros de Búsqueda**: Herramientas avanzadas para filtrar análisis por fecha, tipo de sentimiento o palabras clave, mejorando la experiencia de navegación.
+- **Paginación**: Sistema de navegación eficiente que permite explorar grandes volúmenes de datos históricos sin perder rendimiento.
+- **Opciones de Exportación**: Funcionalidad para descargar el historial en formato CSV, facilitando el análisis externo y la integración con otras herramientas.
+- **Diseño Modular Responsivo**: Interfaz construida con componentes CSS independientes que se adaptan perfectamente a diferentes tamaños de pantalla, desde móviles hasta pantallas de escritorio.

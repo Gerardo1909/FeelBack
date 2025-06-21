@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='history.css') }}">
 {% endblock %}
 
+{% block body_class %}history-page{% endblock %}
+
 {% block nav_buttons %}
     <a href="{{ url_for('main.chat') }}" class="nav-btn">Volver al chat</a>
     <a href="{{ url_for('auth.logout') }}" class="nav-btn">Cerrar Sesión</a>
@@ -13,4 +15,96 @@
 {% endblock %}
 
 {% block content %}
+<div class="history-container">
+    <div class="history-header-container">
+        <h1 class="history-title">Historial detallado</h1>
+        <a href="{{ url_for('main.export_to_csv') }}" class="export-btn">Exportar a CSV</a>
+    </div>
+
+    <div class="history-controls">
+        <div class="history-filters">
+            <a href="{{ url_for('main.order_by_date') }}" class="filter-btn">Ordenar por fecha</a>
+            <a href="{{ url_for('main.filter_by_sentiment') }}" class="filter-btn">Filtrar por sentimiento</a>
+        </div>
+    </div>
+
+    <div class="history-messages">
+        {% for message in messages %}
+        <div class="history-message-card">
+            <div class="message-row">
+                <div class="message-date">Fecha: {{ message.created_at.strftime('%Y-%m-%d') }}</div>
+                <div class="sentiment-badge {{ message.sentiment.description.lower() }}">{{ message.sentiment.description }}</div>
+            </div>
+            <div class="message-content" style="max-height: 3rem; overflow: hidden;">
+                {{ message.text }}
+            </div>
+            <div class="message-actions">
+                <form method="POST" action="{{ url_for('main.delete_message', message_id=message.id) }}">
+                    <button type="submit" class="delete-btn">Borrar</button>
+                </form>
+                {% if message.text|length > 100 %}
+                <button class="expand-btn">Expandir</button>
+                {% endif %}
+                <div class="feedback-buttons">
+                    {% if message.liked is not none %}
+                        {% if message.liked %}
+                        <button class="feedback-btn like-btn active"></button>
+                        {% else %}
+                        <button class="feedback-btn dislike-btn active"></button>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-messages">
+            <p>No hay mensajes en tu historial.</p>
+            <a href="{{ url_for('main.chat') }}" class="start-chat-btn">Comenzar a chatear</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const expandButtons = document.querySelectorAll('.expand-btn');
+        expandButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const messageCard = this.closest('.history-message-card');
+                const messageContent = messageCard.querySelector('.message-content');
+                if (messageContent.classList.contains('expanded')) {
+                    messageContent.classList.remove('expanded');
+                    messageContent.style.maxHeight = '3rem';
+                    this.textContent = 'Expandir';
+                } else {
+                    messageContent.classList.add('expanded');
+                    messageContent.style.maxHeight = messageContent.scrollHeight + 'px';
+                    this.textContent = 'Contraer';
+                }
+            });
+        });
+        
+        // Botones de like/dislike
+        const likeButtons = document.querySelectorAll('.like-btn');
+        const dislikeButtons = document.querySelectorAll('.dislike-btn');
+        
+        likeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Aquí iría la lógica para enviar el like al servidor
+                this.classList.add('active');
+                const dislikeBtn = this.parentElement.querySelector('.dislike-btn');
+                dislikeBtn.classList.remove('active');
+            });
+        });
+        
+        dislikeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Aquí iría la lógica para enviar el dislike al servidor
+                this.classList.add('active');
+                const likeBtn = this.parentElement.querySelector('.like-btn');
+                likeBtn.classList.remove('active');
+            });
+        });
+    });
+</script>
 {% endblock %}

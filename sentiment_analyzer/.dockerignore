@@ -1,0 +1,19 @@
+# Ignorar entornos virtuales
+venv/
+*.pyc
+__pycache__/
+
+# Ignorar archivos de configuración locales
+.env
+*.log
+
+# Ignorar archivos de desarrollo
+dev/
+*.ipynb
+tests/
+versions/  # Opcional: si las versiones del modelo no son necesarias en el contenedor
+
+# Ignorar archivos de sistema
+.DS_Store
+.vscode/
+.idea/

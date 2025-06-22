@@ -1,107 +1,99 @@
 # FeelBack: Aplicación Web Interactiva para Análisis de Sentimientos
 
-**FeelBack** es una aplicación web interactiva desarrollada con Python, cuyo propósito es permitir a los usuarios escribir comentarios o reseñas de texto y obtener un análisis automático de su sentimiento utilizando un modelo de aprendizaje automático entrenado con **PyTorch**. La clasificación del texto puede ser **positiva**, **negativa** o **neutral**.
-
-El sistema incluye autenticación básica para que los usuarios puedan iniciar sesión y visualizar su historial personal de análisis. La interfaz está compuesta por dos vistas principales: un formulario de acceso (login/registro) y una página tipo chat donde se realiza el análisis de sentimientos.
+**FeelBack** es una aplicación web que combina inteligencia artificial y diseño intuitivo para ofrecer análisis de sentimientos en tiempo real. Los usuarios pueden interactuar con un modelo de aprendizaje automático entrenado con **PyTorch** a través de una interfaz tipo chat, obteniendo clasificaciones emocionales como **positiva**, **negativa** o **neutral**. Además, la aplicación permite a los usuarios gestionar su historial de análisis y explorar sus resultados de manera organizada.
 
 ## 🚀 Tecnologías Utilizadas
 
 - **Lenguaje de programación:** Python
 - **Framework Backend:** Flask
-- **Base de datos:** PostgreSQL
 - **Modelo de ML:** PyTorch
-- **Contenerización:** Docker, Docker Compose
+- **Base de datos:** PostgreSQL
+- **Contenerización:** Docker y Docker Compose
 
 ## 🧩 Funcionalidades Principales
 
 ![Funcionalidades Principales](./img/funcionalidades_principales.png)
 
-1. **Registro y Login de Usuarios**
-   - Formulario de registro e inicio de sesión.
-   - Validación y autenticación básicas para proteger los datos de cada usuario.
+1. **Gestión de Usuarios**  
+   - Sistema de registro e inicio de sesión para proteger los datos personales de cada usuario.
+   - Cada usuario tiene acceso a su historial de análisis.
 
-2. **Análisis de Sentimientos**
-   - Interfaz tipo chat para ingresar comentarios.
-   - Modelo entrenado en PyTorch que devuelve una clasificación del sentimiento.
+2. **Interacción Conversacional**  
+   - Los usuarios pueden escribir comentarios en una interfaz tipo chat y recibir análisis de sentimientos en tiempo real.
+   - El modelo de aprendizaje automático clasifica el texto en positivo, negativo o neutral.
 
-3. **Historial Personal**
-   - Cada usuario puede consultar los resultados anteriores de sus análisis.
+3. **Historial Personalizado**  
+   - Los usuarios pueden consultar sus análisis previos, filtrarlos por fecha o tipo de sentimiento, y exportarlos en formato CSV.
 
 ## 📚 Estructura del Proyecto
 
 ```bash
 FeelBack/
-├── app/
-│   ├── __init__.py             # Inicialización y configuración de la aplicación Flask
-│   ├── config.py               # Configuración general de la aplicación
-│   ├── auth/                   # Módulo de autenticación
-│   │   ├── __init__.py         # Inicialización del blueprint de autenticación
-│   │   ├── forms/              # Formularios de autenticación
-│   │   │   ├── loginform.py    # Formulario de inicio de sesión
-│   │   │   └── registerform.py # Formulario de registro
-│   │   └── routes/             # Rutas de autenticación
-│   │       ├── login.py        # Manejo de inicio de sesión
-│   │       ├── logout.py       # Manejo de cierre de sesión
-│   │       └── register.py     # Manejo de registro de usuarios
-│   ├── main/                   # Módulo principal de la aplicación
-│   │   ├── __init__.py         # Inicialización del blueprint principal
-│   │   ├── forms/              # Formularios para funcionalidades principales
-│   │   │   ├── chatform.py     # Formulario para chat y análisis
-│   │   │   └── feedbackform.py # Formulario para retroalimentación
-│   │   └── routes/             # Rutas principales
-│   │       ├── chat.py         # Manejo del análisis de sentimientos
-│   │       ├── history.py      # Vista de historial de análisis
-│   │       └── home.py         # Página de inicio y dashboard
-│   ├── models/                 # Modelos de datos
-│   │   ├── database_schema.sql # Esquema de la base de datos
-│   │   ├── message.py          # Modelo para mensajes y análisis
-│   │   ├── sentiment.py        # Modelo para resultados de sentimientos
-│   │   ├── stats.py            # Modelo para estadísticas
-│   │   └── user.py             # Modelo de usuario
-│   ├── static/                 # Archivos estáticos
-│   │   ├── base.css            # Estilos base compartidos
-│   │   ├── auth.css            # Estilos para autenticación
-│   │   ├── chat.css            # Estilos para la interfaz de chat
-│   │   ├── home.css            # Estilos para la página principal
-│   │   ├── history.css         # Estilos para la página de historial
-│   │   ├── error.css           # Estilos para páginas de error
-│   │   └── img/                # Imágenes y recursos visuales
-│   ├── templates/              # Plantillas HTML
-│   │   ├── base.html           # Plantilla base con estructura común
-│   │   ├── auth/               # Plantillas de autenticación
-│   │   │   ├── login.html      # Página de inicio de sesión
-│   │   │   └── register.html   # Página de registro
-│   │   └── main/               # Plantillas principales
-│   │       ├── chat.html       # Interfaz de análisis de sentimientos
-│   │       ├── error.html      # Páginas de error
-│   │       ├── history.html    # Vista de historial
-│   │       └── home.html       # Página de inicio
-│   ├── sentiment_analyzer_v/   # Modelos de análisis de sentimientos
-│   └── utils/                  # Utilidades y helpers
+├── web_app/                    # Servicio principal: Aplicación web
+│   ├── app/                    # Código fuente de la aplicación Flask
+│   │   ├── auth/               # Módulo de autenticación
+│   │   ├── main/               # Módulo principal (chat, historial, etc.)
+│   │   ├── models/             # Modelos de datos
+│   │   ├── static/             # Archivos estáticos (CSS, JS, imágenes)
+│   │   ├── templates/          # Plantillas HTML
+│   │   ├── utils/              # Utilidades compartidas
+│   │   ├── __init__.py         # Inicialización y configuración de la aplicación Flask
+│   │   └── config.py           # Configuración general de la aplicación
+│   ├── Dockerfile              # Contenedor para la aplicación web
+│   ├── .dockerignore            
+│   ├── migrations              # Migraciones de base de datos
+│   ├── tests                   # Pruebas unitarias            
+│   ├── requirements.txt        # Dependencias de la aplicación web
+│   ├── run.py                  # Punto de entrada para ejecutar la aplicación
+│   └── setup.py                # Configuración del paquete
+├── sentiment_analyzer/         # Microservicio para el modelo de análisis
+│   ├── api/                    # Endpoints RESTful para análisis de sentimientos
+│   ├── core/                   # Lógica principal del modelo (PyTorch)
+│   ├── dev/                    # Archivos de desarrollo (notebooks, pruebas)
+│   ├── versions/               # Versiones del modelo (archivos .pt)
+│   ├── Dockerfile              # Contenedor para el microservicio
+│   ├── .dockerignore            
+│   ├── requirements.txt        # Dependencias del microservicio
+│   ├── run.py                  # Punto de entrada para ejecutar el microservicio
+│   └── setup.py                # Configuración del paquete
 ├── img/                        # Imágenes para documentación
-├── migrations/                 # Migraciones de base de datos
-├── sentiment_analyzer_dev/     # Desarrollo del modelo de análisis
-├── tests/                      # Pruebas unitarias
-├── docker-compose.yml          # Configuración de Docker Compose
-├── Dockerfile                  # Configuración de imagen Docker
-├── README.md                   # Documentación del proyecto
-├── requirements.txt            # Dependencias del proyecto
-├── run.py                      # Punto de entrada para la app Flask
-└── setup.py                    # Configuración del paquete
-````
+├── .gitignore                  
+├── docker-compose.yml          # Orquestación de servicios
+└── README.md                   # Documentación principal del proyecto
+```
+
+### Arquitectura Modular
+
+La decisión de dividir la aplicación en servicios independientes responde a la necesidad de mantener una estructura organizada, escalable y fácil de mantener. Esta arquitectura modular permite separar las responsabilidades de cada componente, lo que impacta positivamente en varios aspectos de la aplicación:
+
+1. **Separación de responsabilidades**:
+   - **Web App**: Se encarga de la interacción con el usuario, gestionando las vistas, la autenticación y el historial de análisis.
+   - **Sentiment Analyzer**: Se dedica exclusivamente al procesamiento de datos y análisis de sentimientos, exponiendo una API que puede ser utilizada por la aplicación web u otros clientes en el futuro.
+
+2. **Escalabilidad**:
+   - Al estar dividida en servicios, cada componente puede ser escalado de forma independiente según las necesidades. Por ejemplo, el microservicio de análisis de sentimientos puede ser replicado para manejar un mayor volumen de solicitudes sin afectar la aplicación web.
+
+3. **Mantenimiento**:
+   - La separación de lógica facilita el mantenimiento del código, ya que los cambios en un servicio no afectan directamente a los demás.
+   - Los desarrolladores pueden trabajar en diferentes servicios de forma simultánea sin interferencias.
+
+4. **Reutilización**:
+   - El microservicio de análisis de sentimientos puede ser reutilizado por otras aplicaciones o integraciones externas, lo que amplía el alcance del proyecto.
+
+5. **Despliegue independiente**:
+   - Gracias a la contenerización con Docker, cada servicio puede ser desplegado de forma independiente, lo que simplifica el proceso de despliegue y actualización.
+
+Esta arquitectura modular no solo mejora la organización del proyecto, sino que también prepara la aplicación para crecer y adaptarse a nuevas necesidades en el futuro.
 
 ## 🐳 Dockerización
 
-El proyecto incluye archivos de configuración para contenerizar la aplicación:
-
-* `Dockerfile`: Define la imagen para el servicio Flask.
-* `docker-compose.yml`: Orquesta los servicios Flask y PostgreSQL.
+FeelBack está completamente contenerizado para facilitar su despliegue y escalabilidad. Los servicios están orquestados mediante Docker Compose:
 
 ```bash
-# Construcción del contenedor
+# Construcción de los contenedores
 docker-compose build
 
-# Ejecución
+# Ejecución de los servicios
 docker-compose up
 ```
 

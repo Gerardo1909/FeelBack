@@ -26,7 +26,9 @@ def create_app(config_name='default'):
     # Registrar blueprints
     from app.main import main as main_blueprint
     from app.auth import auth as auth_blueprint
+    from app.api.v1 import api_v1 as api_v1_blueprint
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    app.register_blueprint(api_v1_blueprint, url_prefix='/api/v1')
     
     return app

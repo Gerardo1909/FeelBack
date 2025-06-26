@@ -70,6 +70,54 @@ body.history-page {
     color: #333;
 }
 
+/* Dropdown styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    background-color: #f3f4f6;
+    color: #333;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-btn:hover {
+    background-color: #e5e7eb;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    z-index: 1;
+    min-width: 150px;
+}
+
+.dropdown-content a {
+    color: #333;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.2s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f3f4f6;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
 /* Mensajes del historial */
 .history-messages {
     display: grid;

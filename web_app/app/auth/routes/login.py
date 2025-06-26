@@ -1,7 +1,10 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request, session
 from app.auth import auth
 from app.auth.forms.loginform import LoginForm
 from flask_login import login_user
+from app.config import Config 
+import requests
+from typing import Union
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -15,24 +18,44 @@ def login():
         username = login_form.username.data
         password = login_form.password.data
         
-        # Buscar usuario en la base de datos
-        user = User.query.filter_by(username=username).first()
+        # Envio solicitud a la API para autenticar al usuario
+        response = authenticate_user(username, password)
         
-        if user and user.verify_password(password):
+        if isinstance(response, dict):
+            token = response.get('token')
+            user_id = response.get('user_id')
+
+            # Guardo el token en la sesión
+            session['token'] = token
             
-            # Login exitoso
+            # Logueo al usuario
+            user = User.query.get(user_id)
             login_user(user)
+            flash('Inicio de sesión exitoso', 'success')
             
             # Si el usuario se loguea desde una página que requiere autenticación, redirigir a esa página
             next = request.args.get('next')
             if not next or not next.startswith('/'):
                 next = url_for('main.home')
             return redirect(next)
-            
-        # Si el usuario no existe o la contraseña es incorrecta
-        flash('Usuario o contraseña incorrectos', 'error')
-        return render_template('auth/login.html', form=login_form)
+                
+        else:
+            error_message = response
+            flash(error_message, 'error')
+            return render_template('auth/login.html', form=login_form)
     
     return render_template('auth/login.html', form=login_form)
+
+
+def authenticate_user(username, password) -> Union[dict, str]:
+    response = requests.post(
+        f'{Config.API_BASE_URL}/auth/login',
+        json={'username': username, 'password': password}
+    )
+    if response.status_code == 200:
+        return response.json()
+    else:
+        error_message = response.json().get('error')
+        return error_message
 
 

@@ -12,6 +12,9 @@ class Config:
     
     # Configuración de seguridad
     SECRET_KEY = os.getenv('SECRET_KEY') or 'dev-secret-key-change-in-production'
+    
+    # Configuracion de API 
+    API_BASE_URL = os.getenv('API_BASE_URL')
 
 
     @staticmethod
@@ -24,20 +27,22 @@ class DevelopmentConfig(Config):
     DEBUG = True
     HOST = '0.0.0.0'
     PORT = 5000
-    SQLALCHEMY_ECHO = True  # Muestra las consultas SQL en la consola
+    SQLALCHEMY_ECHO = True  
+    SQLALCHEMY_DATABASE_URI = f"{Config.SQLALCHEMY_DATABASE_URI}?options=-c%20search_path=feelback_dev"  # Apunta al esquema de desarrollo
 
 
 class TestingConfig(Config):
     """Configuración para el entorno de pruebas."""
     TESTING = True
-    SQLALCHEMY_ECHO = False  # No muestra las consultas SQL en la consola
-    PRESERVE_CONTEXT_ON_EXCEPTION = False  # No preserva el contexto en caso de excepciones
+    SQLALCHEMY_ECHO = False  
+    PRESERVE_CONTEXT_ON_EXCEPTION = False  
+    SQLALCHEMY_DATABASE_URI = f"{Config.SQLALCHEMY_DATABASE_URI}?options=-c%20search_path=feelback_test"  # Apunta al esquema de pruebas
 
 
 class ProductionConfig(Config):
     """Configuración para el entorno de producción."""
     DEBUG = False
-    SQLALCHEMY_ECHO = False  # No muestra las consultas SQL en la consola
+    SQLALCHEMY_ECHO = False  
     
     
 config = {

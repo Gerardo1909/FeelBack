@@ -45,7 +45,7 @@
                             Un chat bot que te dice el tipo de sentimiento que detecta en tu mensaje.
                         </p>
                         <div class="action-button">
-                            {% if session.user_id %}
+                            {% if current_user.is_authenticated %}
                                 <a href="{{ url_for('main.chat') }}" class="btn-start-chat">
                                     Empezar a chatear ahora
                                 </a>

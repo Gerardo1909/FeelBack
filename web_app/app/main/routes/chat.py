@@ -1,11 +1,12 @@
 from flask import render_template, flash, session, redirect, url_for, request
 from app.main import main
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, logout_user
 from app.main.forms.chatform import ChatForm
 from app.main.forms.feedbackform import FeedbackForm
-from app import db
-from typing import Tuple
 from datetime import datetime
+import requests
+from app.config import Config 
+from typing import Union
 
 
 @main.route('/chat', methods=['GET', 'POST'])
@@ -23,19 +24,21 @@ def chat():
         # Obtener mensaje del formulario
         user_message = chat_form.message.data
 
-        # Obtener sentimiento (simulado por ahora)
-        response_text, id_sentiment = generate_response(user_message)
+        # Obtener sentimiento del mensaje
+        response = get_message_response(user_message)
+        
+        if isinstance(response, dict):
 
-        # Construir estructura del mensaje
-        message_info = {
-            'message': user_message,
-            'response': response_text,
-            'id_sentiment': id_sentiment,
-            'liked': None,
-            'disliked': None,
-            'feedback': None,
-            'timestamp': datetime.now().strftime('%H:%M')
-        }
+            # Construir estructura del mensaje
+            message_info = {
+                'message': user_message,
+                'response': response.get('model_response'),
+                'id_sentiment': response.get('id_sentiment'),
+                'liked': None,
+                'disliked': None,
+                'feedback': None,
+                'timestamp': datetime.now().strftime('%H:%M')
+            }
 
         # Agregar al historial y marcar la sesión como modificada
         session['chat_history'].append(message_info)
@@ -97,26 +100,58 @@ def reset_chat():
     return redirect(next_page or url_for('main.chat'))
 
 
+def get_message_response(message: str) -> Union[dict, str]:
+    """Obtiene una respuesta del modelo de lenguaje."""
+    
+    token = session.get('token')
+    response = requests.post(
+        f'{Config.API_BASE_URL}/chat/get-sentiment',
+        json={'message': message},
+        headers={'Authorization': f'Bearer {token}'}
+    )
+    
+    if response.status_code == 200:
+        return response.json()
+    else:
+        error_message = response.json().get('error')
+        
+        if error_message == 'Token inválido o expirado.':
+            flash("Por favor, inicia sesión para continuar.", "error")
+            logout_user()
+            return redirect(url_for('main.login'))  
+        else: 
+            return error_message
+
+
 def save_message_info_to_db(message_info: dict) -> None:
     """Guarda un solo mensaje del usuario en la base de datos."""
-    from app.models.message import Message
 
-    try:
-        new_message = Message(
-            user_id=current_user.id,
-            text=message_info.get('message'),
-            id_sentiment=message_info.get('id_sentiment'),
-            liked=message_info.get('liked'),
-            # Podrías guardar 'feedback' también si tu modelo lo permite
-        )
-
-        db.session.add(new_message)
-        db.session.commit()
-
-    except Exception as e:
-        db.session.rollback()
-        flash('Error al guardar el mensaje. Intenta nuevamente.', 'error')
-        flash(str(e), 'error')
+    # Obtengo el token de la sesión
+    token = session.get('token')
+    
+    # Pongo la info del mensaje que quiero guardar 
+    dict_message = {
+        'user_id': f'{current_user.id}',
+        'text': f"{message_info.get('message')}",
+        'id_sentiment': f"{message_info.get('id_sentiment')}",
+        'liked': f"{message_info.get('liked')}"
+    }
+    
+    response = requests.post(
+        f'{Config.API_BASE_URL}/user/save-message',
+        json=dict_message,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+    
+    if response.status_code != 201:
+        error_message = response.json().get('error')
+        
+        if error_message == 'Token inválido o expirado.':
+            flash("Por favor, inicia sesión para continuar.", "error")
+            logout_user()
+            return redirect(url_for('main.login'))  
+        
+        flash(error_message, 'error')
 
 
 def save_all_messages() -> None:
@@ -124,18 +159,3 @@ def save_all_messages() -> None:
     chat_history = session.get('chat_history', [])
     for message_info in chat_history:
         save_message_info_to_db(message_info)
-
-
-def generate_response(message: str) -> Tuple[str, int]:
-    """Genera una respuesta para el mensaje del usuario."""
-    from app.models.sentiment import Sentiment
-
-    # Aquí deberías usar tu modelo real
-    response_from_model = 'neutral'  # cambiar por lógica real
-
-    sentiment = Sentiment.query.filter_by(description=response_from_model).first()
-    id_sentiment = sentiment.id if sentiment else None
-
-    final_response = f'El sentimiento detectado en tu mensaje es: {response_from_model}.'
-
-    return final_response, id_sentiment

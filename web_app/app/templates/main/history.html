@@ -23,8 +23,21 @@
 
     <div class="history-controls">
         <div class="history-filters">
-            <a href="{{ url_for('main.order_by_date') }}" class="filter-btn">Ordenar por fecha</a>
-            <a href="{{ url_for('main.filter_by_sentiment') }}" class="filter-btn">Filtrar por sentimiento</a>
+            <div class="dropdown">
+                <button class="dropdown-btn">Ordenar por fecha</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('main.order_by_date', asc='asc') }}">Ascendente</a>
+                    <a href="{{ url_for('main.order_by_date', asc='desc') }}">Descendente</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropdown-btn">Filtrar por sentimiento</button>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=1) }}">Positivo</a>
+                    <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=2) }}">Neutral</a>
+                    <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=3) }}">Negativo</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -32,8 +45,8 @@
         {% for message in messages %}
         <div class="history-message-card">
             <div class="message-row">
-                <div class="message-date">Fecha: {{ message.created_at.strftime('%Y-%m-%d') }}</div>
-                <div class="sentiment-badge {{ message.sentiment.description.lower() }}">{{ message.sentiment.description }}</div>
+                <div class="message-date">Fecha: {{ message.created_at}}</div>
+                <div class="sentiment-badge {{ message.sentiment_text.lower() }}">{{ message.sentiment_text }}</div>
             </div>
             <div class="message-content" style="max-height: 3rem; overflow: hidden;">
                 {{ message.text }}
@@ -81,28 +94,6 @@
                     messageContent.style.maxHeight = messageContent.scrollHeight + 'px';
                     this.textContent = 'Contraer';
                 }
-            });
-        });
-        
-        // Botones de like/dislike
-        const likeButtons = document.querySelectorAll('.like-btn');
-        const dislikeButtons = document.querySelectorAll('.dislike-btn');
-        
-        likeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Aquí iría la lógica para enviar el like al servidor
-                this.classList.add('active');
-                const dislikeBtn = this.parentElement.querySelector('.dislike-btn');
-                dislikeBtn.classList.remove('active');
-            });
-        });
-        
-        dislikeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                // Aquí iría la lógica para enviar el dislike al servidor
-                this.classList.add('active');
-                const likeBtn = this.parentElement.querySelector('.like-btn');
-                likeBtn.classList.remove('active');
             });
         });
     });

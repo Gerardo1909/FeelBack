@@ -25,65 +25,98 @@
 3. **Historial Personalizado**  
    - Los usuarios pueden consultar sus análisis previos, filtrarlos por fecha o tipo de sentimiento, y exportarlos en formato CSV.
 
-## 📚 Estructura del Proyecto
+## 📚 Estructura del Proyecto (Actualizada)
 
 ```bash
 FeelBack/
-├── web_app/                    # Servicio principal: Aplicación web
+├── web_app/                    # Servicio principal: Aplicación web (Frontend + API Backend)
 │   ├── app/                    # Código fuente de la aplicación Flask
-│   │   ├── auth/               # Módulo de autenticación
-│   │   ├── main/               # Módulo principal (chat, historial, etc.)
-│   │   ├── models/             # Modelos de datos
+│   │   ├── api/                # API RESTful: rutas para autenticación, chat y usuario
+│   │   ├── auth/               # Módulo de autenticación (formularios, rutas web)
+│   │   ├── main/               # Módulo principal (chat, historial, vistas web)
+│   │   ├── models/             # Modelos de datos (ORM)
 │   │   ├── static/             # Archivos estáticos (CSS, JS, imágenes)
-│   │   ├── templates/          # Plantillas HTML
+│   │   ├── templates/          # Plantillas HTML (Jinja2)
 │   │   ├── utils/              # Utilidades compartidas
 │   │   ├── __init__.py         # Inicialización y configuración de la aplicación Flask
 │   │   └── config.py           # Configuración general de la aplicación
 │   ├── Dockerfile              # Contenedor para la aplicación web
-│   ├── .dockerignore            
-│   ├── migrations              # Migraciones de base de datos
-│   ├── tests                   # Pruebas unitarias            
+│   ├── migrations/             # Migraciones de base de datos
+│   ├── tests/                  # Pruebas unitarias de la API y lógica
 │   ├── requirements.txt        # Dependencias de la aplicación web
 │   ├── run.py                  # Punto de entrada para ejecutar la aplicación
 │   └── setup.py                # Configuración del paquete
-├── sentiment_analyzer/         # Microservicio para el modelo de análisis
+├── sentiment_analyzer/         # Microservicio para el modelo de análisis de sentimientos
 │   ├── api/                    # Endpoints RESTful para análisis de sentimientos
 │   ├── core/                   # Lógica principal del modelo (PyTorch)
 │   ├── dev/                    # Archivos de desarrollo (notebooks, pruebas)
 │   ├── versions/               # Versiones del modelo (archivos .pt)
 │   ├── Dockerfile              # Contenedor para el microservicio
-│   ├── .dockerignore            
 │   ├── requirements.txt        # Dependencias del microservicio
 │   ├── run.py                  # Punto de entrada para ejecutar el microservicio
 │   └── setup.py                # Configuración del paquete
 ├── img/                        # Imágenes para documentación
-├── .gitignore                  
 ├── docker-compose.yml          # Orquestación de servicios
 └── README.md                   # Documentación principal del proyecto
 ```
 
-### Arquitectura Modular
+### Arquitectura Modular y API
 
-La decisión de dividir la aplicación en servicios independientes responde a la necesidad de mantener una estructura organizada, escalable y fácil de mantener. Esta arquitectura modular permite separar las responsabilidades de cada componente, lo que impacta positivamente en varios aspectos de la aplicación:
+La aplicación está dividida en dos servicios principales:
+- **Web App**: Provee tanto la interfaz de usuario como una API RESTful para autenticación, gestión de usuarios, chat y consultas de historial.
+- **Sentiment Analyzer**: Microservicio dedicado al análisis de sentimientos, expuesto como API y consumido por la Web App.
 
-1. **Separación de responsabilidades**:
-   - **Web App**: Se encarga de la interacción con el usuario, gestionando las vistas, la autenticación y el historial de análisis.
-   - **Sentiment Analyzer**: Se dedica exclusivamente al procesamiento de datos y análisis de sentimientos, exponiendo una API que puede ser utilizada por la aplicación web u otros clientes en el futuro.
+Esta separación permite:
+- Escalabilidad y despliegue independiente de cada servicio.
+- Reutilización del microservicio de análisis por otras aplicaciones.
+- Mantenimiento y desarrollo desacoplado.
 
-2. **Escalabilidad**:
-   - Al estar dividida en servicios, cada componente puede ser escalado de forma independiente según las necesidades. Por ejemplo, el microservicio de análisis de sentimientos puede ser replicado para manejar un mayor volumen de solicitudes sin afectar la aplicación web.
+## 📖 Endpoints de la API (Web App)
 
-3. **Mantenimiento**:
-   - La separación de lógica facilita el mantenimiento del código, ya que los cambios en un servicio no afectan directamente a los demás.
-   - Los desarrolladores pueden trabajar en diferentes servicios de forma simultánea sin interferencias.
+A continuación se listan las rutas principales de la API RESTful expuesta por la Web App, agrupadas por funcionalidad:
 
-4. **Reutilización**:
-   - El microservicio de análisis de sentimientos puede ser reutilizado por otras aplicaciones o integraciones externas, lo que amplía el alcance del proyecto.
+### Autenticación (`/api/v1/auth`)
+- **POST `/register`**: Registra un nuevo usuario.  
+  _Body_: username, email, password  
+  _Respuesta_: Mensaje de éxito o error.
 
-5. **Despliegue independiente**:
-   - Gracias a la contenerización con Docker, cada servicio puede ser desplegado de forma independiente, lo que simplifica el proceso de despliegue y actualización.
+- **POST `/login`**: Inicia sesión y retorna un token JWT.  
+  _Body_: username, password  
+  _Respuesta_: token, user_id.
 
-Esta arquitectura modular no solo mejora la organización del proyecto, sino que también prepara la aplicación para crecer y adaptarse a nuevas necesidades en el futuro.
+- **POST `/verify-token`**: Verifica la validez de un token JWT.  
+  _Body_: token  
+  _Respuesta_: Mensaje de validez y user_id.
+
+### Chat y Análisis de Sentimientos (`/api/v1/chat`)
+- **POST `/get-sentiment`**: Analiza el sentimiento de un mensaje de texto.  
+  _Body_: message  
+  _Respuesta_: model_response (texto), id_sentiment (código de sentimiento).
+
+### Gestión de Mensajes e Historial (`/api/v1/user`)
+- **POST `/save-message`**: Guarda un mensaje analizado en el historial del usuario.  
+  _Body_: user_id, text, id_sentiment, liked  
+  _Respuesta_: Mensaje de éxito y id_message.
+
+- **POST `/delete-message`**: Elimina un mensaje del historial del usuario.  
+  _Body_: user_id, message_id  
+  _Respuesta_: Mensaje de éxito.
+
+- **GET `/get-message`**: Obtiene un mensaje específico del historial.  
+  _Body_: user_id, message_id  
+  _Respuesta_: Detalles del mensaje.
+
+- **GET `/get-messages`**: Obtiene todos los mensajes del usuario.  
+  _Body_: user_id  
+  _Respuesta_: Lista de mensajes.
+
+- **GET `/get-stats`**: Obtiene estadísticas de uso y sentimientos del usuario.  
+  _Body_: user_id  
+  _Respuesta_: Conteo de positivos, negativos, neutrales, likes y dislikes.
+
+### 📝 Notas adicionales
+
+- Todas las rutas protegidas requieren autenticación mediante token JWT en el header `Authorization: Bearer <token>`.
 
 ## 🐳 Dockerización
 

@@ -22,3 +22,14 @@ class Stats(db.Model):
     def __repr__(self):
         return f'<Stats User:{self.user_id} P:{self.positive} N:{self.negative} Ne:{self.neutral}>'
     
+    def to_dict(self):
+        """Convierte el modelo a un diccionario."""
+        return {
+            'user_id': self.user_id,
+            'positive': self.positive,
+            'negative': self.negative,
+            'neutral': self.neutral,
+            'liked': self.liked,
+            'disliked': self.disliked
+        }
+    

@@ -6,6 +6,7 @@
 # Archivos de caché
 __pycache__/
 .cache/
+.pytest_cache/
 
 # Logs y archivos de registro
 logs/*.log
@@ -41,7 +42,7 @@ MANIFEST
 
 # Directorios y archivos de dependencias
 /.idea
-/.vscode
+.vscode
 /.vs
 
 # Archivos de configuración local

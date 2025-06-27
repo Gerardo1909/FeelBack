@@ -7,21 +7,26 @@
 {% endblock %}
 
 {% block nav_buttons %}
-<a href="{{ url_for('main.home') }}" class="nav-btn">Volver a la página principal</a>
+<a href="{{ url_for('main.home') }}" class="nav-btn">Volver al inicio</a>
+<a href="{{ url_for('auth.login') }}" class="nav-btn">Iniciar Sesión</a>
 {% endblock %}
 
 {% block content %}
-<section class="register-section">
-    <div class="register-container">
-        <div class="register-form-wrapper">
-            <h1 class="register-title">Crear una nueva cuenta</h1>
+<section class="auth-section register-section">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title">Crear Cuenta</h1>
+                <p class="auth-subtitle">Únete a FeelBack y comienza a analizar sentimientos</p>
+            </div>
             
-            <form class="register-form" method="POST" action="{{ url_for('auth.register') }}">
+            <form class="auth-form" method="POST" action="{{ url_for('auth.register') }}" id="registerForm">
                 {{ form.hidden_tag() if form }}
                 
                 <div class="form-group">
+                    <label for="username" class="form-label">Usuario</label>
                     {% if form %}
-                        {{ form.username(class="form-input", placeholder="Nombre de usuario") }}
+                        {{ form.username(class="form-input", placeholder="Elige un nombre de usuario", id="username") }}
                         {% if form.username.errors %}
                             <div class="error-messages">
                                 {% for error in form.username.errors %}
@@ -30,13 +35,14 @@
                             </div>
                         {% endif %}
                     {% else %}
-                        <input type="text" name="username" class="form-input" placeholder="Nombre de usuario" required>
+                        <input type="text" name="username" id="username" class="form-input" placeholder="Elige un nombre de usuario" required>
                     {% endif %}
                 </div>
 
                 <div class="form-group">
+                    <label for="email" class="form-label">Correo Electrónico</label>
                     {% if form %}
-                        {{ form.email(class="form-input", placeholder="Correo electrónico") }}
+                        {{ form.email(class="form-input", placeholder="tu@email.com", id="email") }}
                         {% if form.email.errors %}
                             <div class="error-messages">
                                 {% for error in form.email.errors %}
@@ -45,44 +51,82 @@
                             </div>
                         {% endif %}
                     {% else %}
-                        <input type="email" name="email" class="form-input" placeholder="Correo electrónico" required>
+                        <input type="email" name="email" id="email" class="form-input" placeholder="tu@email.com" required>
                     {% endif %}
                 </div>
 
                 <div class="form-group">
-                    {% if form %}
-                        {{ form.password(class="form-input", placeholder="Contraseña") }}
-                        {% if form.password.errors %}
-                            <div class="error-messages">
-                                {% for error in form.password.errors %}
-                                    <span class="error">{{ error }}</span>
-                                {% endfor %}
-                            </div>
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="password-input-wrapper">
+                        {% if form %}
+                            {{ form.password(class="form-input", placeholder="Crea una contraseña segura", id="password") }}
+                        {% else %}
+                            <input type="password" name="password" id="password" class="form-input" placeholder="Crea una contraseña segura" required>
                         {% endif %}
-                    {% else %}
-                        <input type="password" name="password" class="form-input" placeholder="Contraseña" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <span class="password-toggle-icon">👁️</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Password Requirements -->
+                    <div class="password-requirements" id="passwordRequirements" style="display: none;">
+                        <div class="password-requirement" id="lengthReq">
+                            <span class="password-requirement-icon">❌</span>
+                            Al menos 8 caracteres
+                        </div>
+                        <div class="password-requirement" id="uppercaseReq">
+                            <span class="password-requirement-icon">❌</span>
+                            Una letra mayúscula
+                        </div>
+                        <div class="password-requirement" id="lowercaseReq">
+                            <span class="password-requirement-icon">❌</span>
+                            Una letra minúscula
+                        </div>
+                        <div class="password-requirement" id="numberReq">
+                            <span class="password-requirement-icon">❌</span>
+                            Un número
+                        </div>
+                    </div>
+                    
+                    {% if form and form.password.errors %}
+                        <div class="error-messages">
+                            {% for error in form.password.errors %}
+                                <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
                     {% endif %}
                 </div>
 
                 <div class="form-group">
-                    {% if form %}
-                        {{ form.confirm_password(class="form-input", placeholder="Confirmar contraseña") }}
-                        {% if form.confirm_password.errors %}
-                            <div class="error-messages">
-                                {% for error in form.confirm_password.errors %}
-                                    <span class="error">{{ error }}</span>
-                                {% endfor %}
-                            </div>
+                    <label for="confirm_password" class="form-label">Confirmar Contraseña</label>
+                    <div class="password-input-wrapper">
+                        {% if form %}
+                            {{ form.confirm_password(class="form-input", placeholder="Confirma tu contraseña", id="confirm_password") }}
+                        {% else %}
+                            <input type="password" name="confirm_password" id="confirm_password" class="form-input" placeholder="Confirma tu contraseña" required>
                         {% endif %}
-                    {% else %}
-                        <input type="password" name="confirm_password" class="form-input" placeholder="Confirmar contraseña" required>
+                        <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                            <span class="password-toggle-icon">👁️</span>
+                        </button>
+                    </div>
+                    
+                    <div class="password-match" id="passwordMatch" style="display: none;">
+                        <span class="password-requirement-icon">❌</span>
+                        <span class="password-match-text">Las contraseñas no coinciden</span>
+                    </div>
+                    
+                    {% if form and form.confirm_password.errors %}
+                        <div class="error-messages">
+                            {% for error in form.confirm_password.errors %}
+                                <span class="error">{{ error }}</span>
+                            {% endfor %}
+                        </div>
                     {% endif %}
                 </div>
 
                 <div class="form-group checkbox-group">
                     <label class="checkbox-container">
-                        <input type="checkbox" name="terms" required>
-                        <span class="checkmark"></span>
+                        <input type="checkbox" name="terms" id="terms" required>
                         <span class="checkbox-text">
                             Acepto los <a href="#" class="terms-link">términos y condiciones</a>
                         </span>
@@ -90,17 +134,137 @@
                 </div>
 
                 {% if form %}
-                    {{ form.submit(class="btn-register", value="Registrar") }}
+                    {{ form.submit(class="btn-auth-primary", value="Crear Cuenta", id="submitBtn") }}
                 {% else %}
-                    <button type="submit" class="btn-register">Registrar</button>
+                    <button type="submit" class="btn-auth-primary" id="submitBtn">Crear Cuenta</button>
                 {% endif %}
             </form>
+            
+            <div class="auth-footer">
+                <p class="auth-link-text">
+                    ¿Ya tienes una cuenta? 
+                    <a href="{{ url_for('auth.login') }}" class="auth-link">Inicia sesión aquí</a>
+                </p>
+            </div>
         </div>
     </div>
-    
-    <!-- Sección decorativa inferior -->
-    <div class="register-bottom">
-        <div class="gradient-section"></div>
-    </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling.querySelector('.password-toggle-icon');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        icon.textContent = '👁️';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const passwordRequirements = document.getElementById('passwordRequirements');
+    const passwordMatch = document.getElementById('passwordMatch');
+    const submitBtn = document.getElementById('submitBtn');
+    const termsCheckbox = document.getElementById('terms');
+    
+    // Password requirements validation
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        passwordRequirements.style.display = password ? 'block' : 'none';
+        
+        // Length check
+        const lengthReq = document.getElementById('lengthReq');
+        const lengthValid = password.length >= 8;
+        updateRequirement(lengthReq, lengthValid);
+        
+        // Uppercase check
+        const uppercaseReq = document.getElementById('uppercaseReq');
+        const uppercaseValid = /[A-Z]/.test(password);
+        updateRequirement(uppercaseReq, uppercaseValid);
+        
+        // Lowercase check
+        const lowercaseReq = document.getElementById('lowercaseReq');
+        const lowercaseValid = /[a-z]/.test(password);
+        updateRequirement(lowercaseReq, lowercaseValid);
+        
+        // Number check
+        const numberReq = document.getElementById('numberReq');
+        const numberValid = /\d/.test(password);
+        updateRequirement(numberReq, numberValid);
+        
+        checkPasswordMatch();
+        updateSubmitButton();
+    });
+    
+    // Confirm password validation
+    confirmPasswordInput.addEventListener('input', function() {
+        checkPasswordMatch();
+        updateSubmitButton();
+    });
+    
+    // Terms checkbox
+    termsCheckbox.addEventListener('change', updateSubmitButton);
+    
+    function updateRequirement(element, isValid) {
+        const icon = element.querySelector('.password-requirement-icon');
+        if (isValid) {
+            element.classList.add('valid');
+            icon.textContent = '✅';
+        } else {
+            element.classList.remove('valid');
+            icon.textContent = '❌';
+        }
+    }
+    
+    function checkPasswordMatch() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        if (confirmPassword) {
+            passwordMatch.style.display = 'flex';
+            const icon = passwordMatch.querySelector('.password-requirement-icon');
+            const text = passwordMatch.querySelector('.password-match-text');
+            
+            if (password === confirmPassword) {
+                passwordMatch.classList.add('valid');
+                icon.textContent = '✅';
+                text.textContent = 'Las contraseñas coinciden';
+            } else {
+                passwordMatch.classList.remove('valid');
+                icon.textContent = '❌';
+                text.textContent = 'Las contraseñas no coinciden';
+            }
+        } else {
+            passwordMatch.style.display = 'none';
+        }
+    }
+    
+    function updateSubmitButton() {
+        const password = passwordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        const termsAccepted = termsCheckbox.checked;
+        
+        // Check all password requirements
+        const lengthValid = password.length >= 8;
+        const uppercaseValid = /[A-Z]/.test(password);
+        const lowercaseValid = /[a-z]/.test(password);
+        const numberValid = /\d/.test(password);
+        const passwordValid = lengthValid && uppercaseValid && lowercaseValid && numberValid;
+        const passwordsMatch = password === confirmPassword && confirmPassword !== '';
+        
+        const allValid = passwordValid && passwordsMatch && termsAccepted;
+        
+        submitBtn.disabled = !allValid;
+        submitBtn.style.opacity = allValid ? '1' : '0.6';
+        submitBtn.style.cursor = allValid ? 'pointer' : 'not-allowed';
+    }
+});
+</script>
 {% endblock %}

@@ -119,7 +119,7 @@ def get_user_stats(data):
     user_id = int(data.get('user_id'))
     
     # Obtener estadísticas del usuario por ID
-    user_stats = db.session.get(Stats, data['user_id'])
+    user_stats = db.session.get(Stats, user_id)
     
     if not user_stats:
         return {'error': 'Estadísticas no encontradas para este usuario'}, 404

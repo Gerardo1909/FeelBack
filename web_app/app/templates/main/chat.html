@@ -1,118 +1,227 @@
 {% extends "base.html" %}
 
-{% block title %}Feelback - Chat{% endblock %}
+{% block title %}FeelBack - Chat{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='chat.css') }}">
 {% endblock %}
 
+{% block body_class %}chat-page{% endblock %}
 
 {% block nav_buttons %}
-    <a href="{{ url_for('main.reset_chat', next=url_for('main.history')) }}" class="nav-btn">Ver historial</a>
-    <a href="{{ url_for('main.reset_chat', next=url_for('auth.logout')) }}" class="nav-btn">Cerrar Sesión</a>
-    <a href="{{ url_for('main.reset_chat', next=url_for('main.home')) }}" class="nav-btn">Volver a inicio</a>
+    <a href="{{ url_for('main.history') }}" class="nav-btn">Historial</a>
+    <a href="{{ url_for('auth.logout') }}" class="nav-btn">Cerrar Sesión</a>
 {% endblock %}
 
 {% block content %}
+<div class="chat-layout">
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="chat-header-content">
+            <h1 class="chat-title">Análisis de Sentimientos</h1>
+            <p class="chat-subtitle">
+                Escribe un mensaje y descubre qué sentimiento transmite. 
+                <a href="{{ url_for('main.history') }}" class="history-link">Ver historial</a>
+            </p>
+        </div>
+    </div>
 
-<div class="chat-container">
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+            {% if not history %}
+                <div class="chat-welcome">
+                    <div class="welcome-icon">💬</div>
+                    <h3 class="welcome-title">¡Comienza la conversación!</h3>
+                    <p class="welcome-text">Escribe un mensaje para analizar su sentimiento</p>
+                </div>
+            {% endif %}
 
-    <div class="chat-box" id="chat-box">
+            {% for item in history %}
+                <!-- User Message -->
+                <div class="message-group user-group">
+                    <div class="message-bubble user-bubble">
+                        <div class="message-content">{{ item.message }}</div>
+                        <div class="message-timestamp">{{ item.timestamp }}</div>
+                    </div>
+                    <div class="message-avatar user-avatar">
+                        <span class="avatar-icon">👤</span>
+                    </div>
+                </div>
 
-        <h2 class="chat-title">Ingresá un texto y obtené una clasificación de sentimientos</h2>
-        <p class="chat-subtitle">
-            Tené en cuenta que luego de que cierres este chat todos tus mensajes enviados junto
-            con su clasificación serán guardados en el <a href="{{ url_for('main.history') }}" class="history-link">historial</a>
-        </p>
+                <!-- Bot Response -->
+                <div class="message-group bot-group">
+                    <div class="message-avatar bot-avatar">
+                        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="FeelBack" class="avatar-image">
+                    </div>
+                    <div class="message-bubble bot-bubble">
+                        <div class="message-content">
+                            {{ item.response }}
+                            <div class="sentiment-indicator">
+                                <span class="sentiment-emoji">
+                                    {% if 'positivo' in item.response.lower() %}😊
+                                    {% elif 'negativo' in item.response.lower() %}😔
+                                    {% else %}😐{% endif %}
+                                </span>
+                                <span class="sentiment-label">
+                                    {% if 'positivo' in item.response.lower() %}Positivo
+                                    {% elif 'negativo' in item.response.lower() %}Negativo
+                                    {% else %}Neutral{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="message-timestamp">{{ item.timestamp }}</div>
+                        
+                        <!-- Feedback Buttons -->
+                        <div class="feedback-section">
+                            <form method="POST" action="{{ url_for('main.get_feedback') }}" class="feedback-form">
+                                {{ feedback_form.hidden_tag() }}
+                                <input type="hidden" name="index" value="{{ loop.index0 }}">
+                                
+                                <div class="feedback-buttons">
+                                    <button type="submit" name="like" value="true" 
+                                            class="feedback-btn like-btn {{ 'active' if item.liked == true else '' }}"
+                                            {{ 'disabled' if item.liked == true else '' }}
+                                            title="Me gusta">
+                                        <span class="feedback-icon">👍</span>
+                                    </button>
+                                    <button type="submit" name="dislike" value="true" 
+                                            class="feedback-btn dislike-btn {{ 'active' if item.liked == false else '' }}"
+                                            {{ 'disabled' if item.liked == false else '' }}
+                                            title="No me gusta">
+                                        <span class="feedback-icon">👎</span>
+                                    </button>
+                                    <button type="button" class="feedback-btn help-btn" 
+                                            onclick="toggleFeedbackText('{{ loop.index0 }}')"
+                                            title="Quiero ayudar">
+                                        <span class="feedback-icon">💬</span>
+                                    </button>
+                                </div>
+                            </form>
 
-        {% for item in history %}
-            <div class="chat-row user">
-                <div class="chat-bubble user-bubble">
-                    {{ item.message }}
-                    <span class="chat-user-timestamp">{{ item.timestamp }}</span>
+                            <!-- Expandable Feedback Text -->
+                            <div class="feedback-text-area" id="feedbackArea{{ loop.index0 }}" style="display: none;">
+                                <form method="POST" action="{{ url_for('main.get_feedback') }}" class="feedback-text-form">
+                                    {{ feedback_form.hidden_tag() }}
+                                    <input type="hidden" name="index" value="{{ loop.index0 }}">
+                                    <div class="feedback-input-group">
+                                        {{ feedback_form.feedback(class="feedback-textarea", placeholder="Escribe tu comentario para ayudarnos a mejorar...") }}
+                                        <button type="submit" class="feedback-submit-btn">Enviar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Loading indicator -->
+            <div class="message-group bot-group loading-message" id="loadingMessage" style="display: none;">
+                <div class="message-avatar bot-avatar">
+                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="FeelBack" class="avatar-image">
+                </div>
+                <div class="message-bubble bot-bubble">
+                    <div class="typing-indicator">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="chat-row bot">
-                <div class="chat-icon">
-                    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="FeelBack Logo">
-                </div>
-                <div class="chat-bubble bot-bubble">
-                    {{ item.response }}
-                    <span class="chat-bot-timestamp">{{ item.timestamp }}</span>
-                </div>
-            </div>
-
-            <!-- Formulario de feedback separado, siempre visible -->
-            <div class="feedback-row">
-                <form method="POST" action="{{ url_for('main.get_feedback') }}" class="feedback-form">
-                    {{ feedback_form.hidden_tag() }}
-                    <input type="hidden" name="index" value="{{ loop.index0 }}">
-
-                    <button type="submit" name="like" value="true" class="feedback-btn like-btn" 
-                            {% if item.liked == true %}disabled{% endif %}></button>
-                    <button type="submit" name="dislike" value="true" class="feedback-btn dislike-btn"
-                            {% if item.liked == false %}disabled{% endif %}></button>
-                    
-                    <button type="button" class="feedback-btn help-btn">
-                        Quiero ayudar
+    <!-- Chat Input -->
+    <div class="chat-input-container">
+        <form method="POST" class="chat-input-form" id="chatForm">
+            {{ form.hidden_tag() }}
+            <div class="input-wrapper">
+                {{ form.message(class="chat-input", placeholder="Escribe tu mensaje aquí...", id="messageInput") }}
+                <div class="input-actions">
+                    <button type="button" class="action-btn reset-btn" onclick="resetChat()" title="Limpiar chat">
+                        <span class="action-icon">🔄</span>
                     </button>
-                </form>
-
-                <!-- Área de feedback expandible -->
-                <div class="feedback-textarea-wrapper" id="feedback-{{ loop.index0 }}" style="display:none;">
-                    <form method="POST" action="{{ url_for('main.get_feedback') }}" class="feedback-text-form">
-                        {{ feedback_form.hidden_tag() }}
-                        <input type="hidden" name="index" value="{{ loop.index0 }}">
-                        {{ feedback_form.feedback(class="feedback-textarea", placeholder="Escribe tu comentario...") }}
-                        <button type="submit" class="feedback-submit-btn">Confirmar</button>
-                    </form>
+                    <button type="submit" class="action-btn send-btn" id="sendBtn" title="Enviar mensaje">
+                        <span class="action-icon">📤</span>
+                    </button>
                 </div>
             </div>
-        {% endfor %}
+        </form>
     </div>
 </div>
+{% endblock %}
 
-<div class="chat-controls-container">
-    <form method="POST" class="chat-input-form">
-        {{ form.hidden_tag() }}
-        {{ form.message(class="chat-input", placeholder="Escribí un mensaje...") }}
-        <div class="chat-actions">
-            <a href="{{ url_for('main.reset_chat') }}" class="chat-reset-btn" title="Limpiar chat"></a>
-            <button type="submit" class="chat-submit-btn" title="Analizar">Analizar</button>
-            </button>
-        </div>
-    </form>
-</div>
-
-<script>    // Scroll automático al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-        const chatBox = document.getElementById("chat-box");
-        chatBox.scrollTop = chatBox.scrollHeight;
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatMessages = document.getElementById('chatMessages');
+    const messageInput = document.getElementById('messageInput');
+    const chatForm = document.getElementById('chatForm');
+    const sendBtn = document.getElementById('sendBtn');
+    const loadingMessage = document.getElementById('loadingMessage');
+    
+    // Auto-scroll to bottom
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Initial scroll
+    scrollToBottom();
+    
+    // Form submission
+    chatForm.addEventListener('submit', function(e) {
+        if (!messageInput.value.trim()) {
+            e.preventDefault();
+            return;
+        }
         
-        // Añadir MutationObserver para detectar cambios en el chat y hacer scroll automático
-        const observer = new MutationObserver(function(mutations) {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-        
-        observer.observe(chatBox, { childList: true, subtree: true });
-
-        // Expandir área de feedback al hacer clic en "Quiero ayudar"
-        const helpButtons = document.querySelectorAll('.help-btn');
-        helpButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const form = this.closest('.feedback-row');
-                const feedbackArea = form.querySelector('.feedback-textarea-wrapper');
-                if (feedbackArea) {
-                    if (feedbackArea.style.display === 'none') {
-                        feedbackArea.style.display = 'block';
-                    } else {
-                        feedbackArea.style.display = 'none';
-                    }
-                }
-            });
-        });
+        // Show loading state
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<span class="action-icon">⏳</span>';
+        loadingMessage.style.display = 'flex';
+        scrollToBottom();
     });
-</script>
+    
+    // Auto-resize textarea
+    messageInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        
+        // Enable/disable send button
+        sendBtn.disabled = !this.value.trim();
+    });
+    
+    // Enter key handling
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            if (this.value.trim()) {
+                chatForm.submit();
+            }
+        }
+    });
+    
+    // Initial button state
+    sendBtn.disabled = !messageInput.value.trim();
+});
 
+function toggleFeedbackText(index) {
+    const feedbackArea = document.getElementById('feedbackArea' + index);
+    const isVisible = feedbackArea.style.display !== 'none';
+    
+    if (isVisible) {
+        feedbackArea.style.display = 'none';
+    } else {
+        feedbackArea.style.display = 'block';
+        const textarea = feedbackArea.querySelector('.feedback-textarea');
+        textarea.focus();
+    }
+}
+
+function resetChat() {
+    if (confirm('¿Estás seguro de que quieres limpiar el chat?')) {
+        window.location.href = "{{ url_for('main.reset_chat') }}";
+    }
+}
+</script>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Feelback - Historial{% endblock %}
+{% block title %}FeelBack - Historial{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='history.css') }}">
@@ -9,93 +9,224 @@
 {% block body_class %}history-page{% endblock %}
 
 {% block nav_buttons %}
-    <a href="{{ url_for('main.chat') }}" class="nav-btn">Volver al chat</a>
+    <a href="{{ url_for('main.chat') }}" class="nav-btn">Volver al Chat</a>
     <a href="{{ url_for('auth.logout') }}" class="nav-btn">Cerrar Sesión</a>
-    <a href="{{ url_for('main.home') }}" class="nav-btn">Volver a inicio</a>
 {% endblock %}
 
 {% block content %}
-<div class="history-container">
-    <div class="history-header-container">
-        <h1 class="history-title">Historial detallado</h1>
-        <a href="{{ url_for('main.export_to_csv') }}" class="export-btn">Exportar a CSV</a>
+<div class="history-layout">
+    <!-- History Header -->
+    <div class="history-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="history-title">Historial de Análisis</h1>
+                <p class="history-subtitle">Revisa todos tus análisis de sentimientos anteriores</p>
+            </div>
+            <div class="header-actions">
+                <a href="{{ url_for('main.export_to_csv') }}" class="export-btn">
+                    <span class="btn-icon">📊</span>
+                    Exportar CSV
+                </a>
+            </div>
+        </div>
     </div>
 
-    <div class="history-controls">
-        <div class="history-filters">
-            <div class="dropdown">
-                <button class="dropdown-btn">Ordenar por fecha</button>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('main.order_by_date', asc='asc') }}">Ascendente</a>
-                    <a href="{{ url_for('main.order_by_date', asc='desc') }}">Descendente</a>
+    <!-- Statistics Cards -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card positive">
+                <div class="stat-icon">😊</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ positive }}</div>
+                    <div class="stat-label">Positivos</div>
                 </div>
             </div>
-            <div class="dropdown">
-                <button class="dropdown-btn">Filtrar por sentimiento</button>
-                <div class="dropdown-content">
-                    <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=1) }}">Positivo</a>
-                    <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=2) }}">Neutral</a>
-                    <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=3) }}">Negativo</a>
+            <div class="stat-card negative">
+                <div class="stat-icon">😔</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ negative }}</div>
+                    <div class="stat-label">Negativos</div>
+                </div>
+            </div>
+            <div class="stat-card neutral">
+                <div class="stat-icon">😐</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ neutral }}</div>
+                    <div class="stat-label">Neutrales</div>
+                </div>
+            </div>
+            <div class="stat-card total">
+                <div class="stat-icon">📈</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ messages|length }}</div>
+                    <div class="stat-label">Total</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="history-messages">
-        {% for message in messages %}
-        <div class="history-message-card">
-            <div class="message-row">
-                <div class="message-date">Fecha: {{ message.created_at}}</div>
-                <div class="sentiment-badge {{ message.sentiment_text.lower() }}">{{ message.sentiment_text }}</div>
+    <!-- Filters Section -->
+    <div class="filters-section">
+        <div class="filters-container">
+            <h3 class="filters-title">Filtros</h3>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label class="filter-label">Ordenar por fecha</label>
+                    <div class="dropdown">
+                        <button class="dropdown-btn" id="dateDropdown">
+                            <span>Seleccionar orden</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-content" id="dateDropdownContent">
+                            <a href="{{ url_for('main.order_by_date', asc='desc') }}" class="dropdown-item">Más reciente primero</a>
+                            <a href="{{ url_for('main.order_by_date', asc='asc') }}" class="dropdown-item">Más antiguo primero</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label class="filter-label">Filtrar por sentimiento</label>
+                    <div class="dropdown">
+                        <button class="dropdown-btn" id="sentimentDropdown">
+                            <span>Todos los sentimientos</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-content" id="sentimentDropdownContent">
+                            <a href="{{ url_for('main.history') }}" class="dropdown-item">Todos</a>
+                            <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=1) }}" class="dropdown-item">
+                                <span class="sentiment-icon">😊</span> Positivo
+                            </a>
+                            <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=2) }}" class="dropdown-item">
+                                <span class="sentiment-icon">😐</span> Neutral
+                            </a>
+                            <a href="{{ url_for('main.filter_by_sentiment', id_sentiment=3) }}" class="dropdown-item">
+                                <span class="sentiment-icon">😔</span> Negativo
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="message-content" style="max-height: 3rem; overflow: hidden;">
-                {{ message.text }}
-            </div>
-            <div class="message-actions">
-                <form method="POST" action="{{ url_for('main.delete_message', message_id=message.id) }}">
-                    <button type="submit" class="delete-btn">Borrar</button>
-                </form>
-                {% if message.text|length > 100 %}
-                <button class="expand-btn">Expandir</button>
-                {% endif %}
-                <div class="feedback-buttons">
-                    {% if message.liked is not none %}
-                        {% if message.liked %}
-                        <button class="feedback-btn like-btn active"></button>
-                        {% else %}
-                        <button class="feedback-btn dislike-btn active"></button>
-                        {% endif %}
+        </div>
+    </div>
+
+    <!-- Messages Section -->
+    <div class="messages-section">
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="message-card" data-sentiment="{{ message.sentiment_text.lower() }}">
+                    <div class="message-header">
+                        <div class="message-info">
+                            <div class="sentiment-badge {{ message.sentiment_text.lower() }}">
+                                <span class="sentiment-emoji">
+                                    {% if message.sentiment_text == 'Positivo' %}😊
+                                    {% elif message.sentiment_text == 'Negativo' %}😔
+                                    {% else %}😐{% endif %}
+                                </span>
+                                <span class="sentiment-text">{{ message.sentiment_text }}</span>
+                            </div>
+                            <div class="message-date">{{ message.created_at if message.created_at else 'Fecha no disponible' }}</div>
+                        </div>
+                        <div class="message-actions">
+                            {% if message.liked is not none %}
+                                <div class="feedback-indicator">
+                                    {% if message.liked %}
+                                        <span class="feedback-icon liked" title="Te gustó">👍</span>
+                                    {% else %}
+                                        <span class="feedback-icon disliked" title="No te gustó">👎</span>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                            <form method="POST" action="{{ url_for('main.delete_message', message_id=message.id) }}" class="delete-form" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este mensaje?')">
+                                <button type="submit" class="delete-btn" title="Eliminar mensaje">
+                                    <span class="delete-icon">🗑️</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="message-content" id="content{{ message.id }}">
+                        <p class="message-text">{{ message.text }}</p>
+                    </div>
+                    
+                    {% if message.text|length > 150 %}
+                    <button class="expand-btn" onclick="toggleExpand('{{ message.id }}')">
+                        <span class="expand-text">Ver más</span>
+                        <span class="expand-icon">▼</span>
+                    </button>
                     {% endif %}
                 </div>
+                {% endfor %}
             </div>
-        </div>
         {% else %}
-        <div class="no-messages">
-            <p>No hay mensajes en tu historial.</p>
-            <a href="{{ url_for('main.chat') }}" class="start-chat-btn">Comenzar a chatear</a>
-        </div>
-        {% endfor %}
+            <div class="no-messages">
+                <div class="no-messages-icon">📭</div>
+                <h3 class="no-messages-title">No hay mensajes en tu historial</h3>
+                <p class="no-messages-text">Comienza a chatear para ver tus análisis de sentimientos aquí</p>
+                <a href="{{ url_for('main.chat') }}" class="start-chat-btn">
+                    <span class="btn-icon">💬</span>
+                    Comenzar a Chatear
+                </a>
+            </div>
+        {% endif %}
     </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const expandButtons = document.querySelectorAll('.expand-btn');
-        expandButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const messageCard = this.closest('.history-message-card');
-                const messageContent = messageCard.querySelector('.message-content');
-                if (messageContent.classList.contains('expanded')) {
-                    messageContent.classList.remove('expanded');
-                    messageContent.style.maxHeight = '3rem';
-                    this.textContent = 'Expandir';
-                } else {
-                    messageContent.classList.add('expanded');
-                    messageContent.style.maxHeight = messageContent.scrollHeight + 'px';
-                    this.textContent = 'Contraer';
+document.addEventListener('DOMContentLoaded', function() {
+    // Dropdown functionality
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const btn = dropdown.querySelector('.dropdown-btn');
+        const content = dropdown.querySelector('.dropdown-content');
+        
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            // Close other dropdowns
+            dropdowns.forEach(otherDropdown => {
+                if (otherDropdown !== dropdown) {
+                    otherDropdown.querySelector('.dropdown-content').classList.remove('show');
+                    otherDropdown.querySelector('.dropdown-arrow').style.transform = 'rotate(0deg)';
                 }
             });
+            
+            // Toggle current dropdown
+            content.classList.toggle('show');
+            const arrow = btn.querySelector('.dropdown-arrow');
+            arrow.style.transform = content.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0deg)';
         });
     });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function() {
+        dropdowns.forEach(dropdown => {
+            const content = dropdown.querySelector('.dropdown-content');
+            const arrow = dropdown.querySelector('.dropdown-arrow');
+            content.classList.remove('show');
+            arrow.style.transform = 'rotate(0deg)';
+        });
+    });
+});
+
+function toggleExpand(messageId) {
+    const content = document.getElementById('content' + messageId);
+    const btn = content.parentElement.querySelector('.expand-btn');
+    const text = btn.querySelector('.expand-text');
+    const icon = btn.querySelector('.expand-icon');
+    
+    if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        text.textContent = 'Ver más';
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        content.classList.add('expanded');
+        text.textContent = 'Ver menos';
+        icon.style.transform = 'rotate(180deg)';
+    }
+}
 </script>
 {% endblock %}

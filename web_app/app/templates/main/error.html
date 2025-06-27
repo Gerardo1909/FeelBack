@@ -1,22 +1,207 @@
 {% extends "base.html" %}
 
-{% block title %}FeelBack - Error{% endblock %}
+{% block title %}
+{% if error_code %}
+    FeelBack - Error {{ error_code }}
+{% else %}
+    FeelBack - Error
+{% endif %}
+{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='error.css') }}">
 {% endblock %}
 
 {% block nav_buttons %}
-<a href="{{ url_for('main.home') }}" class="nav-btn">Volver a Inicio</a>
+<a href="{{ url_for('main.home') }}" class="nav-btn">Volver al inicio</a>
+{% if current_user.is_authenticated %}
+    <a href="{{ url_for('main.chat') }}" class="nav-btn">Ir al Chat</a>
+{% else %}
+    <a href="{{ url_for('auth.login') }}" class="nav-btn">Iniciar Sesión</a>
+{% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="error-container">
-    <div class="error-icon">⚠️</div>
-    <h1 class="error-title">{{ error_title|default('Ha ocurrido un error') }}</h1>
-    <p class="error-message">{{ error_message|default('Lo sentimos, algo salió mal. Por favor, inténtalo de nuevo más tarde.') }}</p>
-    <div class="error-action">
-        <a href="{{ url_for('main.home') }}" class="error-button">Volver a la página principal</a>
+<section class="error-section">
+    <div class="error-container">
+        <div class="error-card">
+            <!-- Error Icon and Code -->
+            <div class="error-visual">
+                <div class="error-icon-container">
+                    {% if error_code == 404 %}
+                        <div class="error-icon not-found">🔍</div>
+                    {% elif error_code == 500 %}
+                        <div class="error-icon server-error">⚠️</div>
+                    {% elif error_code == 403 %}
+                        <div class="error-icon forbidden">🚫</div>
+                    {% elif error_code == 401 %}
+                        <div class="error-icon unauthorized">🔐</div>
+                    {% else %}
+                        <div class="error-icon generic">❌</div>
+                    {% endif %}
+                </div>
+                
+                {% if error_code %}
+                    <div class="error-code">{{ error_code }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Error Content -->
+            <div class="error-content">
+                <h1 class="error-title">
+                    {% if error_title %}
+                        {{ error_title }}
+                    {% elif error_code == 404 %}
+                        Página no encontrada
+                    {% elif error_code == 500 %}
+                        Error interno del servidor
+                    {% elif error_code == 403 %}
+                        Acceso denegado
+                    {% elif error_code == 401 %}
+                        No autorizado
+                    {% else %}
+                        Ha ocurrido un error
+                    {% endif %}
+                </h1>
+
+                <p class="error-description">
+                    {% if error_message %}
+                        {{ error_message }}
+                    {% elif error_code == 404 %}
+                        Lo sentimos, la página que buscas no existe o ha sido movida. Verifica la URL o navega desde el menú principal.
+                    {% elif error_code == 500 %}
+                        Estamos experimentando problemas técnicos. Nuestro equipo ha sido notificado y está trabajando para solucionarlo.
+                    {% elif error_code == 403 %}
+                        No tienes permisos para acceder a esta página. Si crees que esto es un error, contacta al administrador.
+                    {% elif error_code == 401 %}
+                        Necesitas iniciar sesión para acceder a esta página. Por favor, inicia sesión e intenta nuevamente.
+                    {% else %}
+                        Ha ocurrido un error inesperado. Por favor, intenta nuevamente o contacta al soporte si el problema persiste.
+                    {% endif %}
+                </p>
+
+                <!-- Error Details (only for development/debugging) -->
+                {% if error_details and config.DEBUG %}
+                    <div class="error-details">
+                        <button class="details-toggle" onclick="toggleDetails()">
+                            <span class="details-text">Ver detalles técnicos</span>
+                            <span class="details-arrow">▼</span>
+                        </button>
+                        <div class="details-content" id="errorDetails" style="display: none;">
+                            <pre class="details-text">{{ error_details }}</pre>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Error Actions -->
+            <div class="error-actions">
+                <div class="primary-actions">
+                    {% if error_code == 404 %}
+                        <a href="{{ url_for('main.home') }}" class="error-btn primary">
+                            <span class="btn-icon">🏠</span>
+                            Ir al inicio
+                        </a>
+                        <button onclick="history.back()" class="error-btn secondary">
+                            <span class="btn-icon">↩️</span>
+                            Volver atrás
+                        </button>
+                    {% elif error_code == 401 %}
+                        <a href="{{ url_for('auth.login') }}" class="error-btn primary">
+                            <span class="btn-icon">🔑</span>
+                            Iniciar sesión
+                        </a>
+                        <a href="{{ url_for('main.home') }}" class="error-btn secondary">
+                            <span class="btn-icon">🏠</span>
+                            Ir al inicio
+                        </a>
+                    {% elif error_code == 500 %}
+                        <button onclick="location.reload()" class="error-btn primary">
+                            <span class="btn-icon">🔄</span>
+                            Intentar nuevamente
+                        </button>
+                        <a href="{{ url_for('main.home') }}" class="error-btn secondary">
+                            <span class="btn-icon">🏠</span>
+                            Ir al inicio
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('main.home') }}" class="error-btn primary">
+                            <span class="btn-icon">🏠</span>
+                            Ir al inicio
+                        </a>
+                        <button onclick="history.back()" class="error-btn secondary">
+                            <span class="btn-icon">↩️</span>
+                            Volver atrás
+                        </button>
+                    {% endif %}
+                </div>
+
+                <!-- Additional Help -->
+                <div class="help-section">
+                    <p class="help-text">¿Necesitas ayuda?</p>
+                    <div class="help-actions">
+                        {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('main.chat') }}" class="help-link">
+                                <span class="help-icon">💬</span>
+                                Ir al chat
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('main.home') }}#contact" class="help-link">
+                            <span class="help-icon">📧</span>
+                            Contactar soporte
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suggestions (for 404 errors) -->
+        {% if error_code == 404 and suggestions %}
+            <div class="suggestions-card">
+                <h3 class="suggestions-title">¿Quizás buscabas esto?</h3>
+                <div class="suggestions-list">
+                    {% for suggestion in suggestions %}
+                        <a href="{{ suggestion.url }}" class="suggestion-item">
+                            <span class="suggestion-icon">{{ suggestion.icon or '📄' }}</span>
+                            <div class="suggestion-content">
+                                <div class="suggestion-name">{{ suggestion.name }}</div>
+                                <div class="suggestion-desc">{{ suggestion.description }}</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
     </div>
-</div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleDetails() {
+    const details = document.getElementById('errorDetails');
+    const toggle = document.querySelector('.details-toggle');
+    const arrow = toggle.querySelector('.details-arrow');
+    
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        arrow.textContent = '▲';
+        toggle.querySelector('.details-text').textContent = 'Ocultar detalles técnicos';
+    } else {
+        details.style.display = 'none';
+        arrow.textContent = '▼';
+        toggle.querySelector('.details-text').textContent = 'Ver detalles técnicos';
+    }
+}
+</script>
+
+<!-- Auto-report errors (optional) -->
+{% if error_code and error_code >= 500 %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Puedes implementar el reporte automático de errores aquí
+    console.log('Server error {{ error_code }} reported at {{ request.url if request else "unknown" }}');
+});
+</script>
+{% endif %}
 {% endblock %}

@@ -130,70 +130,42 @@ docker-compose build
 docker-compose up
 ```
 
-## 📷 Capturas de pantalla 
+## 📷 Capturas de pantalla
 
 ### Página de Inicio
 
-La página de inicio da la bienvenida a los usuarios y presenta de forma clara el propósito de FeelBack. Implementada con un diseño modular y limpio, cuenta con una estructura de CSS separada que facilita su mantenimiento. Incluye un diseño atractivo con colores cálidos, un área visual destacada y botones de acceso rápido para iniciar sesión o registrarse.
+Pantalla de bienvenida con logo, mensaje introductorio y acceso rápido a registro o inicio de sesión. Diseño limpio, modular y responsivo.
 
-![Página de inicio](./img/pagina_inicio.png)
-
-**Componentes principales:**
-- **Barra de navegación:** Una navbar limpia y consistente que muestra el logo y nombre de la aplicación, con accesos directos para iniciar sesión o registrarse.
-- **Mensaje de bienvenida:** Un encabezado principal con tipografía moderna que explica brevemente la funcionalidad del sistema y motiva al usuario a interactuar.
-- **Ilustración central:** Imagen representativa de la interacción entre un usuario y un robot, con animaciones sutiles que refuerzan el enfoque en el análisis de sentimientos mediante IA.
-- **Botón de acción principal:** Un llamado a la acción prominente con efectos visuales al pasar el cursor, que permite comenzar a chatear y analizar sentimientos de inmediato.
-- **Diseño modular y responsivo:** Estructura basada en componentes CSS individuales que se adaptan a diferentes dispositivos para una experiencia de usuario óptima.
+![Página de inicio](./img/pagina_inicio_1.png)
+![Página de inicio](./img/pagina_inicio_2.png)
 
 ### Página de Inicio de Sesión
-La página de inicio de sesión presenta la interfaz de autenticación donde los usuarios pueden iniciar sesión. Implementada con su propia hoja de estilos modular `auth.css`, ofrece un diseño minimalista y elegante con animaciones sutiles en los campos de entrada y botones. Incluye formularios intuitivos con validación de campos y un diseño limpio que facilita el acceso al sistema.
+
+Formulario sencillo para autenticación de usuarios, con validación y mensajes de error claros.
 
 ![Página inicio](./img/pagina_login.png)
 
-**Componentes principales:**
-- **Formulario de Login**: Campos para email y contraseña con validación en tiempo real, efectos visuales de foco y animaciones de transición.
-- **Barra de navegación consistente**: Mantiene la identidad visual de la aplicación con el logo y nombre de la marca.
-- **Mensajes Flash**: Sistema integrado para mostrar notificaciones de error o éxito con animaciones suaves.
-- **Validación**: Mensajes de error intuitivos y confirmación visual para guiar al usuario durante el proceso.
-- **Diseño Modular Responsivo**: Interfaz construida con componentes CSS independientes que se adaptan perfectamente a diferentes tamaños de pantalla, desde móviles hasta pantallas de escritorio.
-
 ### Página de Registro
-La página de registro permite a los nuevos usuarios crear una cuenta en el sistema FeelBack. Desarrollada con la misma arquitectura modular CSS que la página de inicio de sesión, presenta un formulario claro y estructurado con microinteracciones y validaciones en tiempo real que mejoran la experiencia de usuario durante el proceso de registro.
+
+Formulario para crear una cuenta nueva, validación en tiempo real y confirmación de términos.
 
 ![Página registro](./img/pagina_registro_cuenta_nueva.png)
 
-**Componentes principales:**
-- **Formulario de Registro Optimizado**: Campos específicos para crear una cuenta nueva (nombre, email, contraseña) con etiquetas flotantes y animaciones de transición al completar cada campo.
-- **Validación de Datos Interactiva**: Verificación en tiempo real de formato de email y fortaleza de contraseña con indicadores visuales de progreso y sugerencias.
-- **Términos y Condiciones**: Checkbox personalizado con estilos consistentes para aceptar los términos de uso del servicio.
-- **Botón de Creación**: Elemento visual destacado con efectos de hover y transición que indica claramente la acción principal para completar el proceso de registro.
-- **Navegación Intuitiva**: Enlaces contextuales con estilos consistentes para volver al formulario de inicio de sesión o acceder a información adicional.
+### Página de Interacción (Chat)
 
-### Página de Interacción
-La página principal de la aplicación presenta una interfaz tipo chat moderna inspirada en los mejores diseños de plataformas de IA conversacional. Implementada con su propio archivo modular `chat.css`, ofrece una experiencia de usuario fluida y natural con un área de conversación de tamaño fijo y desplazamiento interno, similar a plataformas como ChatGPT.
+Interfaz tipo chat para analizar sentimientos en tiempo real. Mensajes diferenciados y feedback visual.
 
-![Página interacción](./img/pagina_interaccion.png)
-
-**Componentes principales:**
-- **Área de Chat Fija con Scroll Interno**: Interfaz conversacional con altura fija que permite mantener un diseño consistente mientras el historial de chat crece, con desplazamiento automático a nuevos mensajes.
-- **Burbujas de Chat Distintivas**: Diseño asimétrico que diferencia claramente los mensajes del usuario (gris oscuro, alineados a la derecha) de las respuestas del sistema (blancas con borde, alineadas a la izquierda).
-- **Indicadores de Sentimiento Visuales**: Sistema de feedback con iconos intuitivos (pulgar arriba/abajo) que permiten valorar la precisión del análisis, con estados visuales para indicar la selección actual.
-- **Campo de Entrada Flotante**: Área de texto moderna con bordes redondeados y sombreado sutil, separada visualmente del área de chat pero integrada en el diseño general.
-- **Botones de Acción Circulares**: Controles intuitivos para enviar mensajes y reiniciar la conversación, con efectos de hover y transición.
-- **Navegación Contextual**: Accesos directos en la barra superior para gestionar la sesión y acceder a otras funcionalidades clave del sistema.
-
+![Página interacción](./img/pagina_interaccion_1.png)
+![Página interacción](./img/pagina_interaccion_2.png)
 
 ### Página de Historial
-La página de historial proporciona a los usuarios una vista completa de todos sus análisis de sentimientos previos. Implementada con su propia hoja de estilos modular `history.css`, ofrece una interfaz intuitiva y organizada que facilita el seguimiento de la evolución de los comentarios y su clasificación emocional.
+
+Historial de análisis con estadísticas, filtros, exportación a CSV y visualización clara de cada mensaje.
 
 ![Página historial](./img/pagina_historial.png)
 
-**Componentes principales:**
-- **Lista de Análisis**: Registro detallado de todos los comentarios analizados por el usuario, con una presentación clara y estructurada.
-- **Clasificación Visual**: Indicadores gráficos que muestran el sentimiento detectado (positivo, negativo, neutral) con colores distintivos para facilitar la interpretación.
-- **Fecha y Hora**: Timestamp preciso que permite identificar cuándo se realizó cada análisis.
-- **Texto Original**: Visualización completa del comentario analizado, manteniendo la fidelidad al texto ingresado por el usuario.
-- **Filtros de Búsqueda**: Herramientas avanzadas para filtrar análisis por fecha, tipo de sentimiento o palabras clave, mejorando la experiencia de navegación.
-- **Paginación**: Sistema de navegación eficiente que permite explorar grandes volúmenes de datos históricos sin perder rendimiento.
-- **Opciones de Exportación**: Funcionalidad para descargar el historial en formato CSV, facilitando el análisis externo y la integración con otras herramientas.
-- **Diseño Modular Responsivo**: Interfaz construida con componentes CSS independientes que se adaptan perfectamente a diferentes tamaños de pantalla, desde móviles hasta pantallas de escritorio.
+### Página de Error
+
+Página que se muestra en casos de presentar errores en la aplicación.
+
+![Página error](./img/pagina_error.png)

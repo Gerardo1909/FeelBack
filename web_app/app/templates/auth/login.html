@@ -12,17 +12,20 @@
 {% endblock %}
 
 {% block content %}
-<section class="login-section">
-    <div class="login-container">
-        <div class="login-card">
-            <h1 class="login-title">Entrá a FeelBack!</h1>
+<section class="auth-section">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1 class="auth-title">Iniciar Sesión</h1>
+                <p class="auth-subtitle">Ingresa a tu cuenta para comenzar el análisis de sentimientos</p>
+            </div>
             
-            <!-- Formulario usando Flask-WTF -->
-            <form class="login-form" method="POST" action="{{ url_for('auth.login') }}">
+            <form class="auth-form" method="POST" action="{{ url_for('auth.login') }}">
                 {{ form.hidden_tag() }}
                 
                 <div class="form-group">
-                    {{ form.username(class="form-input", placeholder="Nombre de usuario") }}
+                    <label for="username" class="form-label">Usuario</label>
+                    {{ form.username(class="form-input", placeholder="Ingresa tu usuario", id="username") }}
                     {% if form.username.errors %}
                         <div class="error-messages">
                             {% for error in form.username.errors %}
@@ -33,7 +36,13 @@
                 </div>
                 
                 <div class="form-group">
-                    {{ form.password(class="form-input", placeholder="Contraseña") }}
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="password-input-wrapper">
+                        {{ form.password(class="form-input", placeholder="Ingresa tu contraseña", id="password") }}
+                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                            <span class="password-toggle-icon">👁️</span>
+                        </button>
+                    </div>
                     {% if form.password.errors %}
                         <div class="error-messages">
                             {% for error in form.password.errors %}
@@ -43,12 +52,33 @@
                     {% endif %}
                 </div>
                 
-                {{ form.submit(class="btn-login", value="Ingresar") }}
-            </form>            
-            <div class="login-register-link">
-                <a href="{{ url_for('auth.register') }}">Registrar una cuenta nueva</a>
+                {{ form.submit(class="btn-auth-primary", value="Iniciar Sesión") }}
+            </form>
+            
+            <div class="auth-footer">
+                <p class="auth-link-text">
+                    ¿No tienes una cuenta? 
+                    <a href="{{ url_for('auth.register') }}" class="auth-link">Regístrate aquí</a>
+                </p>
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePassword(inputId) {
+    const input = document.getElementById(inputId);
+    const icon = input.nextElementSibling.querySelector('.password-toggle-icon');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        icon.textContent = '👁️';
+    }
+}
+</script>
 {% endblock %}

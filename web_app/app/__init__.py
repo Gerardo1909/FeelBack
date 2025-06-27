@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, url_for, request, current_app
 from app.config import config 
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -30,5 +30,40 @@ def create_app(config_name='default'):
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
     app.register_blueprint(api_v1_blueprint, url_prefix='/api/v1')
-    
+
+    # Handlers de error globales
+    @app.errorhandler(404)
+    def not_found_error(error):
+        suggestions = [
+            {
+                'name': 'Página de Inicio',
+                'description': 'Volver a la página principal',
+                'url': url_for('main.home'),
+                'icon': '🏠'
+            },
+            {
+                'name': 'Chat de Análisis',
+                'description': 'Analizar sentimientos',
+                'url': url_for('main.chat'),
+                'icon': '💬'
+            }
+        ]
+        return render_template('main/error.html',
+                             error_code=404,
+                             error_title="Página no encontrada",
+                             error_message="La página que buscas no existe.",
+                             suggestions=suggestions,
+                             request=request,
+                             config=current_app.config), 404
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        return render_template('main/error.html',
+                             error_code=500,
+                             error_title="Error interno del servidor",
+                             error_message="Estamos trabajando para solucionarlo.",
+                             error_details=str(error),
+                             request=request,
+                             config=current_app.config), 500
+
     return app

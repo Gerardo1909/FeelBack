@@ -2,13 +2,22 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}FeelBack - Análisis de Sentimientos{% endblock %}</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FeelBack">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#ff6347">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.ico') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='img/logo.ico') }}">
-      <!-- CSS Base -->
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/logo.png') }}">
+    
+    <!-- CSS Base -->
     <link rel="stylesheet" href="{{ url_for('static', filename='base.css') }}">
     
     {% block extra_css %}{% endblock %}
@@ -16,19 +25,72 @@
 <body class="{% block body_class %}{% endblock %}">    
     <!-- Navbar -->
     <nav class="navbar">
-        <!-- Logo/Brand - siempre presente -->
+        <!-- Logo/Brand -->
         <a href="{{ url_for('main.home') }}" class="navbar-brand">
             <img src="{{ url_for('static', filename='img/logo.png') }}" alt="FeelBack Logo" class="navbar-logo">
-            FeelBack
+            <span class="navbar-text">FeelBack</span>
         </a>
         
-        <!-- Menu dinámico - cada página define sus botones -->
-        <div class="navbar-nav">
+        <!-- Desktop Navigation -->
+        <div class="navbar-nav desktop-nav">
             {% block nav_buttons %}
             <!-- Las páginas individuales definirán sus botones aquí -->
             {% endblock %}
         </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobileMenuBtn">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
     </nav>
+
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay">
+        <div class="mobile-nav-content">
+            <div class="mobile-nav-header">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="FeelBack Logo" class="mobile-nav-logo">
+                <span class="mobile-nav-title">FeelBack</span>
+                <button class="mobile-nav-close" id="mobileNavClose">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                {% block mobile_nav_buttons %}
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('main.home') }}" class="mobile-nav-item">
+                        <span class="mobile-nav-icon">🏠</span>
+                        Inicio
+                    </a>
+                    <a href="{{ url_for('main.chat') }}" class="mobile-nav-item">
+                        <span class="mobile-nav-icon">💬</span>
+                        Chat
+                    </a>
+                    <a href="{{ url_for('main.history') }}" class="mobile-nav-item">
+                        <span class="mobile-nav-icon">📊</span>
+                        Historial
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="mobile-nav-item logout">
+                        <span class="mobile-nav-icon">🚪</span>
+                        Cerrar Sesión
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('main.home') }}" class="mobile-nav-item">
+                        <span class="mobile-nav-icon">🏠</span>
+                        Inicio
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="mobile-nav-item">
+                        <span class="mobile-nav-icon">🔑</span>
+                        Iniciar Sesión
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="mobile-nav-item primary">
+                        <span class="mobile-nav-icon">👤</span>
+                        Registrarse
+                    </a>
+                {% endif %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
 
     <!-- Contenido principal -->
     <main class="main-content">
@@ -38,8 +100,8 @@
                 <div class="flash-messages-container">
                     {% for category, message in messages %}
                         <div class="flash-message flash-{{ category }}">
-                            {{ message }}
-                            <button class="flash-close" onclick="this.parentElement.remove()">×</button>
+                            <span class="flash-text">{{ message }}</span>
+                            <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
                         </div>
                     {% endfor %}
                 </div>
@@ -48,6 +110,54 @@
 
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Base JavaScript -->
+    <script>
+        // Mobile Navigation Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+            const mobileNavClose = document.getElementById('mobileNavClose');
+            
+            function openMobileNav() {
+                mobileNavOverlay.classList.add('active');
+                document.body.classList.add('nav-open');
+            }
+            
+            function closeMobileNav() {
+                mobileNavOverlay.classList.remove('active');
+                document.body.classList.remove('nav-open');
+            }
+            
+            mobileMenuBtn.addEventListener('click', openMobileNav);
+            mobileNavClose.addEventListener('click', closeMobileNav);
+            
+            // Close on overlay click
+            mobileNavOverlay.addEventListener('click', function(e) {
+                if (e.target === mobileNavOverlay) {
+                    closeMobileNav();
+                }
+            });
+            
+            // Close on nav item click (mobile)
+            const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+            mobileNavItems.forEach(item => {
+                item.addEventListener('click', closeMobileNav);
+            });
+        });
+
+        // Auto-hide flash messages
+        setTimeout(function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(function(message) {
+                message.style.opacity = '0';
+                message.style.transform = 'translateY(-10px)';
+                setTimeout(function() {
+                    message.remove();
+                }, 300);
+            });
+        }, 5000);
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>

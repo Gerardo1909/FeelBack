@@ -11,8 +11,9 @@ import csv
 def history():
     """Página de historial."""
     
-   # Obtengo mensajes del usuario desde la API
+   # Obtengo mensajes y stats del usuario desde la API
     user_messages = request_user_messages()
+    user_stats = request_user_stats()
     
     if isinstance(user_messages, list):
         # Guardar los mensajes en la variable de sesión
@@ -26,8 +27,25 @@ def history():
             
             
         session['user_messages'] = []
+        
+        
+    if isinstance(user_stats, dict):
+        # Guardar las estadísticas en la variable de sesión
+        session['user_stats'] = user_stats
+        session.modified = True
+    else:
+        error_message = user_stats
+        
+        if error_message != 'Estadísticas no encontradas para este usuario':
+            flash(error_message, 'error')
+            
+        session['user_stats'] = {}
 
-    return render_template('main/history.html', messages=session.get('user_messages', []))
+    return render_template('main/history.html', messages=session.get('user_messages', []), 
+                           neutral= session.get('user_stats', {}).get('neutral', 0),
+                           positive= session.get('user_stats', {}).get('positive', 0),
+                           negative= session.get('user_stats', {}).get('negative', 0))
+                           
 
 
 @main.route('/history/delete/<int:message_id>', methods=['POST'])
@@ -114,6 +132,28 @@ def request_user_messages():
     
     if response.status_code == 200:
         return response.json().get('messages')
+    else:
+        error_message = response.json().get('error')
+        
+        if error_message == 'Token inválido o expirado.':
+            flash("Por favor, inicia sesión para continuar.", "error")
+            logout_user()
+            return redirect(url_for('main.login'))  
+        else: 
+            return error_message
+        
+        
+def request_user_stats():
+    """Realiza una solicitud a la API para obtener las estadísticas del usuario."""
+    token = session.get('token')
+    response = requests.get(f'{Config.API_BASE_URL}/user/get-stats', json={
+        'user_id': current_user.id
+    }, headers={
+        'Authorization': f'Bearer {token}'
+    })
+    
+    if response.status_code == 200:
+        return response.json().get('stats')
     else:
         error_message = response.json().get('error')
         

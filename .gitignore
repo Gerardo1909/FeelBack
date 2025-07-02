@@ -10,6 +10,7 @@ __pycache__/
 
 # Logs y archivos de registro
 logs/*.log
+.coverage
 
 # Directorios y archivos de entornos virtuales
 .env

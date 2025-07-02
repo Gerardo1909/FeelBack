@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, request, current_app
 from app.config import config 
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from app.utils.logging_config import logger
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -32,8 +33,20 @@ def create_app(config_name='default'):
     app.register_blueprint(api_v1_blueprint, url_prefix='/api/v1')
 
     # Handlers de error globales
+    @app.errorhandler(Exception)
+    def handle_global_exception(error):
+        logger.error("Unhandled Exception", error=str(error), path=request.path, method=request.method)
+        return render_template('main/error.html',
+                             error_code=500,
+                             error_title="Error interno del servidor",
+                             error_message="Ocurrió un error inesperado. Estamos trabajando para solucionarlo.",
+                             error_details=str(error),
+                             request=request,
+                             config=current_app.config), 500
+
     @app.errorhandler(404)
     def not_found_error(error):
+        logger.warning("404 Not Found", path=request.path)
         suggestions = [
             {
                 'name': 'Página de Inicio',
@@ -58,6 +71,7 @@ def create_app(config_name='default'):
 
     @app.errorhandler(500)
     def internal_error(error):
+        logger.error("500 Internal Server Error", error=str(error), path=request.path)
         return render_template('main/error.html',
                              error_code=500,
                              error_title="Error interno del servidor",

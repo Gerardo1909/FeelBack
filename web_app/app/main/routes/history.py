@@ -1,9 +1,10 @@
-from flask import render_template, flash, session, redirect, url_for, Response
+from flask import render_template, flash, session, redirect, url_for, Response, request
 from app.main import main
 from flask_login import login_required, current_user, logout_user
 import requests
 from app.config import Config 
 import csv
+from app.utils.logging_config import logger
 
 
 @main.route('/history', methods=['GET'])
@@ -41,6 +42,7 @@ def history():
             
         session['user_stats'] = {}
 
+    logger.info("Historial consultado", user_id=current_user.id)
     return render_template('main/history.html', messages=session.get('user_messages', []), 
                            neutral= session.get('user_stats', {}).get('neutral', 0),
                            positive= session.get('user_stats', {}).get('positive', 0),

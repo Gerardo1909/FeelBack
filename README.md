@@ -1,29 +1,30 @@
 # FeelBack: Aplicación Web Interactiva para Análisis de Sentimientos
 
-| Estado de Build | Cobertura Tests Web App | Cobertura Tests Modelo Sentimientos |
-|:---------------:|:----------------:|:-----------------------------:|
-| ![Build Status](https://img.shields.io/badge/build-passing-brightgreen) | ![Coverage ](https://img.shields.io/badge/coverage-68%25-yellow) | ![Coverage](https://img.shields.io/badge/coverage-0%25-lightgrey) |
+| Estado de Build | Cobertura de Tests |
+|:--------------:|:------------------:|
+| ![Build Status](https://img.shields.io/badge/build-passing-brightgreen) | ![Coverage](https://img.shields.io/badge/coverage-68%25-yellow) |
 
 ## Índice
 - [Descripción](#descripción)
-- [Tecnologías Utilizadas](#tecnologías-utilizadas)
-- [Estructura del Proyecto](#estructura-del-proyecto-actualizada)
-- [Arquitectura Modular y API](#arquitectura-modular-y-api)
-- [Endpoints de la API](#endpoints-de-la-api-web-app)
-- [Dockerización](#dockerización)
-- [Capturas de pantalla](#capturas-de-pantalla)
-- [Contribución](#contribución)
-- [Licencia](#licencia)
+- [Tecnologías Utilizadas](#-tecnologías-utilizadas)
+- [Funcionalidades Principales](#-funcionalidades-principales)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
+- [Endpoints de la API](#-endpoints-de-la-api)
+- [Dockerización](#-dockerización)
+- [Capturas de pantalla](#-capturas-de-pantalla)
+- [Contribución](#-contribución)
+- [Licencia](#-licencia)
 
 ---
 
 ## Descripción
-**FeelBack** es una aplicación web que combina inteligencia artificial y diseño intuitivo para ofrecer análisis de sentimientos en tiempo real. Los usuarios pueden interactuar con un modelo de aprendizaje automático entrenado con **PyTorch** a través de una interfaz tipo chat, obteniendo clasificaciones emocionales como **positiva**, **negativa** o **neutral**. Además, la aplicación permite a los usuarios gestionar su historial de análisis y explorar sus resultados de manera organizada.
+**FeelBack** es una aplicación web que combina inteligencia artificial y diseño intuitivo para ofrecer análisis de sentimientos en tiempo real. Los usuarios pueden interactuar con un modelo de aprendizaje automático extraido de [**HuggingFace**](https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment) a través de una interfaz tipo chat, obteniendo clasificaciones emocionales como **positiva**, **negativa** o **neutral**. Además, la aplicación permite a los usuarios gestionar su historial de análisis y explorar sus resultados de manera organizada.
 
 ## 🚀 Tecnologías Utilizadas
 - **Lenguaje de programación:** Python
 - **Framework Backend:** Flask
-- **Modelo de ML:** PyTorch
+- **Modelo de ML:** BERT Multilingüe (nlptown/bert-base-multilingual-uncased-sentiment) de HuggingFace
+- **Librería de inferencia:** Transformers (HuggingFace)
 - **Base de datos:** PostgreSQL
 - **Contenerización:** Docker y Docker Compose
 
@@ -36,14 +37,14 @@
    - Cada usuario tiene acceso a su historial de análisis.
 2. **Interacción Conversacional**  
    - Los usuarios pueden escribir comentarios en una interfaz tipo chat y recibir análisis de sentimientos en tiempo real.
-   - El modelo de aprendizaje automático clasifica el texto en positivo, negativo o neutral.
+   - El modelo clasifica el texto en positivo, negativo o neutral.
 3. **Historial Personalizado**  
    - Los usuarios pueden consultar sus análisis previos, filtrarlos por fecha o tipo de sentimiento, y exportarlos en formato CSV.
 
-## 📚 Estructura del Proyecto (Actualizada)
+## 📚 Estructura del Proyecto
 ```bash
 FeelBack/
-├── web_app/                    # Servicio principal: Aplicación web (Frontend + API Backend)
+├── web_app/                    # Aplicación web (Frontend + API Backend)
 │   ├── app/                    # Código fuente de la aplicación Flask
 │   │   ├── api/                # API RESTful: rutas para autenticación, chat y usuario
 │   │   ├── auth/               # Módulo de autenticación (formularios, rutas web)
@@ -60,32 +61,13 @@ FeelBack/
 │   ├── requirements.txt        # Dependencias de la aplicación web
 │   ├── run.py                  # Punto de entrada para ejecutar la aplicación
 │   └── setup.py                # Configuración del paquete
-├── sentiment_analyzer/         # Microservicio para el modelo de análisis de sentimientos
-│   ├── api/                    # Endpoints RESTful para análisis de sentimientos
-│   ├── core/                   # Lógica principal del modelo (PyTorch)
-│   ├── dev/                    # Archivos de desarrollo (notebooks, pruebas)
-│   ├── versions/               # Versiones del modelo (archivos .pt)
-│   ├── Dockerfile              # Contenedor para el microservicio
-│   ├── requirements.txt        # Dependencias del microservicio
-│   ├── run.py                  # Punto de entrada para ejecutar el microservicio
-│   └── setup.py                # Configuración del paquete
 ├── img/                        # Imágenes para documentación
 ├── docker-compose.yml          # Orquestación de servicios
 └── README.md                   # Documentación principal del proyecto
 ```
 
-## Arquitectura Modular y API
-La aplicación está dividida en dos servicios principales:
-- **Web App**: Provee tanto la interfaz de usuario como una API RESTful para autenticación, gestión de usuarios, chat y consultas de historial.
-- **Sentiment Analyzer**: Microservicio dedicado al análisis de sentimientos, expuesto como API y consumido por la Web App.
-
-Esta separación permite:
-- Escalabilidad y despliegue independiente de cada servicio.
-- Reutilización del microservicio de análisis por otras aplicaciones.
-- Mantenimiento y desarrollo desacoplado.
-
-## 📖 Endpoints de la API (Web App)
-A continuación se listan las rutas principales de la API RESTful expuesta por la Web App, agrupadas por funcionalidad:
+## 📖 Endpoints de la API
+A continuación se listan las rutas principales de la API RESTful expuesta por FeelBack agrupadas por funcionalidad:
 
 ### Autenticación (`/api/v1/auth`)
 - **POST `/register`**: Registra un nuevo usuario.  
@@ -128,7 +110,7 @@ A continuación se listan las rutas principales de la API RESTful expuesta por l
 
 ## 🩺 Endpoints de Salud y Métricas
 
-La API de la Web App expone endpoints para monitoreo y métricas:
+La API de FeelBack expone endpoints para monitoreo y métricas:
 
 - **GET `/api/v1/health`**: Verifica el estado de salud del servicio principal.
   - _Respuesta ejemplo:_

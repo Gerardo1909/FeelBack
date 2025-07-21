@@ -1,16 +1,25 @@
-
-
+from transformers import pipeline
 
 
 def get_model_response(message:str):
     
     """
-    Simula la obtención de una respuesta del modelo de lenguaje.
-    En un caso real, aquí se integraría la lógica para interactuar con el modelo.
+    Obtiene la respuesta del modelo de lenguaje para el mensaje del usuario.
     """
-    # Aquí se debería integrar la lógica para obtener la respuesta real del modelo de lenguaje.
-    response_from_model = 'neutral'  
-    # En un caso real, se podría hacer una llamada a un servicio externo o a un modelo de IA
-    # para obtener una respuesta basada en el mensaje proporcionado.
 
-    return response_from_model
+    result = sentiment_pipeline(message)
+    label = result[0]['label'] if result and 'label' in result[0] else None
+    if label:
+        stars = int(label.split()[0])
+        if stars <= 2:
+            return "negative"
+        elif stars == 3:
+            return "neutral"
+
+    return "positive"
+
+sentiment_pipeline = pipeline(
+    "sentiment-analysis",
+    model="nlptown/bert-base-multilingual-uncased-sentiment"
+)
+

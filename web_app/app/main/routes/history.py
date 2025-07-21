@@ -1,167 +1,169 @@
-from flask import render_template, flash, session, redirect, url_for, Response, request
-from app.main import main
-from flask_login import login_required, current_user, logout_user
-import requests
-from app.config import Config 
 import csv
+
+import requests
+from flask import Response, flash, redirect, render_template, request, session, url_for
+from flask_login import current_user, login_required, logout_user
+
+from app.config import Config
+from app.main import main
 from app.utils.logging_config import logger
 
 
-@main.route('/history', methods=['GET'])
+@main.route("/history", methods=["GET"])
 @login_required
 def history():
     """Página de historial."""
-    
-   # Obtengo mensajes y stats del usuario desde la API
+
+    # Obtengo mensajes y stats del usuario desde la API
     user_messages = request_user_messages()
     user_stats = request_user_stats()
-    
+
     if isinstance(user_messages, list):
         # Guardar los mensajes en la variable de sesión
-        session['user_messages'] = user_messages
+        session["user_messages"] = user_messages
         session.modified = True
     else:
         error_message = user_messages
-        
-        if error_message != 'No se encontraron mensajes para este usuario':
-            flash(error_message, 'error')
-            
-            
-        session['user_messages'] = []
-        
-        
+
+        if error_message != "No se encontraron mensajes para este usuario":
+            flash(error_message, "error")
+
+        session["user_messages"] = []
+
     if isinstance(user_stats, dict):
         # Guardar las estadísticas en la variable de sesión
-        session['user_stats'] = user_stats
+        session["user_stats"] = user_stats
         session.modified = True
     else:
         error_message = user_stats
-        
-        if error_message != 'Estadísticas no encontradas para este usuario':
-            flash(error_message, 'error')
-            
-        session['user_stats'] = {}
+
+        if error_message != "Estadísticas no encontradas para este usuario":
+            flash(error_message, "error")
+
+        session["user_stats"] = {}
 
     logger.info("Historial consultado", user_id=current_user.id)
-    return render_template('main/history.html', messages=session.get('user_messages', []), 
-                           neutral= session.get('user_stats', {}).get('neutral', 0),
-                           positive= session.get('user_stats', {}).get('positive', 0),
-                           negative= session.get('user_stats', {}).get('negative', 0))
-                           
+    return render_template(
+        "main/history.html",
+        messages=session.get("user_messages", []),
+        neutral=session.get("user_stats", {}).get("neutral", 0),
+        positive=session.get("user_stats", {}).get("positive", 0),
+        negative=session.get("user_stats", {}).get("negative", 0),
+    )
 
 
-@main.route('/history/delete/<int:message_id>', methods=['POST'])
+@main.route("/history/delete/<int:message_id>", methods=["POST"])
 @login_required
 def delete_message(message_id: int):
     """Elimina un mensaje del historial."""
 
     # Mando request a la api
-    token = session.get('token')
-    response = requests.post(f'{Config.API_BASE_URL}/user/delete-message', json={
-            'user_id': current_user.id,
-            'message_id': message_id
-        }, headers={
-            'Authorization': f'Bearer {token}'
-        })
-    
+    token = session.get("token")
+    response = requests.post(
+        f"{Config.API_BASE_URL}/user/delete-message",
+        json={"user_id": current_user.id, "message_id": message_id},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
     if response.status_code == 200:
-        flash('Mensaje eliminado correctamente.', 'success')
+        flash("Mensaje eliminado correctamente.", "success")
     else:
-        error_message = response.json().get('error')
-        flash(error_message, 'error')
+        error_message = response.json().get("error")
+        flash(error_message, "error")
 
-    return redirect(url_for('main.history'))
+    return redirect(url_for("main.history"))
 
 
-@main.route('/history/order_by_date/<asc>', methods=['GET'])
+@main.route("/history/order_by_date/<asc>", methods=["GET"])
 @login_required
 def order_by_date(asc: str):
     """Ordenar historial por fecha."""
     # implementar ordenamiento por fecha
-    messages = session.get('user_messages', [])
-    
-    if asc == 'asc':
-        messages.sort(key=lambda x: x['created_at'])
-    elif asc == 'desc':
-        messages.sort(key=lambda x: x['created_at'], reverse=True)
-    
-    return render_template('main/history.html', messages=messages)
+    messages = session.get("user_messages", [])
+
+    if asc == "asc":
+        messages.sort(key=lambda x: x["created_at"])
+    elif asc == "desc":
+        messages.sort(key=lambda x: x["created_at"], reverse=True)
+
+    return render_template("main/history.html", messages=messages)
 
 
-@main.route('/history/filter_by_sentiment/<int:id_sentiment>', methods=['GET'])
+@main.route("/history/filter_by_sentiment/<int:id_sentiment>", methods=["GET"])
 @login_required
 def filter_by_sentiment(id_sentiment: int):
     """Filtrar historial por sentimiento."""
-    messages = session.get('user_messages', [])
+    messages = session.get("user_messages", [])
 
-    filtered_messages = [msg for msg in messages if msg['id_sentiment'] == id_sentiment]
+    filtered_messages = [msg for msg in messages if msg["id_sentiment"] == id_sentiment]
 
-    return render_template('main/history.html', messages=filtered_messages)
+    return render_template("main/history.html", messages=filtered_messages)
 
 
-@main.route('/history/export_csv', methods=['GET'])
+@main.route("/history/export_csv", methods=["GET"])
 @login_required
 def export_to_csv():
     """Exportar historial a CSV."""
-    messages = session.get('user_messages', [])
+    messages = session.get("user_messages", [])
 
     if not messages:
-        flash('No hay mensajes para exportar.', 'error')
-        return redirect(url_for('main.history'))
+        flash("No hay mensajes para exportar.", "error")
+        return redirect(url_for("main.history"))
 
     # Crear el archivo CSV
-    csv_data = [['Texto', 'Sentimiento', 'Fecha']]
+    csv_data = [["Texto", "Sentimiento", "Fecha"]]
     for msg in messages:
-        csv_data.append([msg['text'], msg['sentiment_text'], msg['created_at']])
+        csv_data.append([msg["text"], msg["sentiment_text"], msg["created_at"]])
 
     # Generar la respuesta CSV
-    response = Response(content_type='text/csv')
-    response.headers['Content-Disposition'] = 'attachment; filename=historial.csv'
+    response = Response(content_type="text/csv")
+    response.headers["Content-Disposition"] = "attachment; filename=historial.csv"
 
     writer = csv.writer(response.stream)
     writer.writerows(csv_data)
 
     return response
 
+
 def request_user_messages():
     """Realiza una solicitud a la API para obtener los mensajes del usuario."""
-    token = session.get('token')
-    response = requests.get(f'{Config.API_BASE_URL}/user/get-messages', json={
-        'user_id': current_user.id
-    }, headers={
-        'Authorization': f'Bearer {token}'
-    })
-    
+    token = session.get("token")
+    response = requests.get(
+        f"{Config.API_BASE_URL}/user/get-messages",
+        json={"user_id": current_user.id},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
     if response.status_code == 200:
-        return response.json().get('messages')
+        return response.json().get("messages")
     else:
-        error_message = response.json().get('error')
-        
-        if error_message == 'Token inválido o expirado.':
+        error_message = response.json().get("error")
+
+        if error_message == "Token inválido o expirado.":
             flash("Por favor, inicia sesión para continuar.", "error")
             logout_user()
-            return redirect(url_for('main.login'))  
-        else: 
+            return redirect(url_for("main.login"))
+        else:
             return error_message
-        
-        
+
+
 def request_user_stats():
     """Realiza una solicitud a la API para obtener las estadísticas del usuario."""
-    token = session.get('token')
-    response = requests.get(f'{Config.API_BASE_URL}/user/get-stats', json={
-        'user_id': current_user.id
-    }, headers={
-        'Authorization': f'Bearer {token}'
-    })
-    
+    token = session.get("token")
+    response = requests.get(
+        f"{Config.API_BASE_URL}/user/get-stats",
+        json={"user_id": current_user.id},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+
     if response.status_code == 200:
-        return response.json().get('stats')
+        return response.json().get("stats")
     else:
-        error_message = response.json().get('error')
-        
-        if error_message == 'Token inválido o expirado.':
+        error_message = response.json().get("error")
+
+        if error_message == "Token inválido o expirado.":
             flash("Por favor, inicia sesión para continuar.", "error")
             logout_user()
-            return redirect(url_for('main.login'))  
-        else: 
+            return redirect(url_for("main.login"))
+        else:
             return error_message

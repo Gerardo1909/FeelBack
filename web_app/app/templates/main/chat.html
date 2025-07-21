@@ -56,16 +56,15 @@
                     </div>
                     <div class="message-bubble bot-bubble">
                         <div class="message-content">
-                            {{ item.response }}
                             <div class="sentiment-indicator">
                                 <span class="sentiment-emoji">
-                                    {% if 'positivo' in item.response.lower() %}😊
-                                    {% elif 'negativo' in item.response.lower() %}😔
+                                    {% if 'positive' in item.response.lower() %}😊
+                                    {% elif 'negative' in item.response.lower() %}😔
                                     {% else %}😐{% endif %}
                                 </span>
                                 <span class="sentiment-label">
-                                    {% if 'positivo' in item.response.lower() %}Positivo
-                                    {% elif 'negativo' in item.response.lower() %}Negativo
+                                    {% if 'positive' in item.response.lower() %}Positivo
+                                    {% elif 'negative' in item.response.lower() %}Negativo
                                     {% else %}Neutral{% endif %}
                                 </span>
                             </div>

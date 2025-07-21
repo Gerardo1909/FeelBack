@@ -114,16 +114,20 @@
         {% if messages %}
             <div class="messages-container">
                 {% for message in messages %}
-                <div class="message-card" data-sentiment="{{ message.sentiment_text.lower() }}">
+                <div class="message-card" data-sentiment="{{ message.sentiment_text}}">
                     <div class="message-header">
                         <div class="message-info">
                             <div class="sentiment-badge {{ message.sentiment_text.lower() }}">
                                 <span class="sentiment-emoji">
-                                    {% if message.sentiment_text == 'Positivo' %}😊
-                                    {% elif message.sentiment_text == 'Negativo' %}😔
+                                    {% if message.sentiment_text == 'positive' %}😊
+                                    {% elif message.sentiment_text == 'negative' %}😔
                                     {% else %}😐{% endif %}
                                 </span>
-                                <span class="sentiment-text">{{ message.sentiment_text }}</span>
+                                <span class="sentiment-text">
+                                    {% if message.sentiment_text == 'positive' %}Positivo
+                                    {% elif message.sentiment_text == 'negative' %}Negativo
+                                    {% else %}Neutral{% endif %}
+                                </span>
                             </div>
                             <div class="message-date">{{ message.created_at if message.created_at else 'Fecha no disponible' }}</div>
                         </div>

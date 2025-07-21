@@ -1,6 +1,7 @@
+from flask import flash, redirect, session, url_for
+from flask_login import login_required, logout_user
+
 from app.auth import auth
-from flask_login import logout_user, login_required
-from flask import redirect, url_for, flash, session
 
 
 @auth.route('/logout')

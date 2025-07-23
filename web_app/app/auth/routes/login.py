@@ -29,7 +29,7 @@ def login():
 def _authenticate_user(username: str, password: str) -> Union[dict, str]:
     """Autenticación de usuario."""
     response = _send_login_request(username, password)
-    response = _handle_login_request(response)
+    response = _handle_login_response(response)
     return response
 
 
@@ -43,7 +43,7 @@ def _send_login_request(username: str, password: str) -> requests.Response:
     return response
 
 
-def _handle_login_request(response: requests.Response) -> Union[dict, str]:
+def _handle_login_response(response: requests.Response) -> Union[dict, str]:
     """Maneja la respuesta de la solicitud de inicio de sesión."""
     if response.status_code == 200:
         return response.json()

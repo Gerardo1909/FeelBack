@@ -18,7 +18,7 @@
 ---
 
 ## Descripción
-**FeelBack** es una aplicación web que combina inteligencia artificial y diseño intuitivo para ofrecer análisis de sentimientos en tiempo real. Los usuarios pueden interactuar con un modelo de aprendizaje automático extraido de [**HuggingFace**](https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment) a través de una interfaz tipo chat, obteniendo clasificaciones emocionales como **positiva**, **negativa** o **neutral**. Además, la aplicación permite a los usuarios gestionar su historial de análisis y explorar sus resultados de manera organizada.
+**FeelBack** es una aplicación web que combina inteligencia artificial y un diseño intuitivo para ofrecer análisis de sentimientos en tiempo real. Los usuarios pueden interactuar con un modelo de aprendizaje automático extraido de [**HuggingFace**](https://huggingface.co/nlptown/bert-base-multilingual-uncased-sentiment) a través de una interfaz tipo chat, obteniendo clasificaciones emocionales como **positiva**, **negativa** o **neutral**. Además, la aplicación permite a los usuarios gestionar su historial de análisis y explorar sus resultados de manera organizada.
 
 ## 🚀 Tecnologías Utilizadas
 - **Lenguaje de programación:** Python
@@ -107,31 +107,6 @@ A continuación se listan las rutas principales de la API RESTful expuesta por F
 - **GET `/get-stats`**: Obtiene estadísticas de uso y sentimientos del usuario.  
   _Body_: user_id  
   _Respuesta_: Conteo de positivos, negativos, neutrales, likes y dislikes.
-
-## 🩺 Endpoints de Salud y Métricas
-
-La API de FeelBack expone endpoints para monitoreo y métricas:
-
-- **GET `/api/v1/health`**: Verifica el estado de salud del servicio principal.
-  - _Respuesta ejemplo:_
-    ```json
-    {
-      "status": "ok",
-      "service": "web_app",
-      "message": "API funcionando correctamente"
-    }
-    ```
-- **GET `/api/v1/metrics`**: Devuelve métricas básicas de uso y salud del backend.
-  - _Respuesta ejemplo:_
-    ```json
-    {
-      "status": "ok",
-      "service": "web_app",
-      "memory_mb": 45.12,
-      "uptime_seconds": 3600,
-      "active_users": 0
-    }
-    ```
 
 Estas rutas permiten la integración con sistemas de monitoreo y dashboards de salud.
 

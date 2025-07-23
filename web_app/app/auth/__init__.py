@@ -1,3 +1,7 @@
+""" 
+    Modulo de autenticación de usuarios.
+"""
+
 from flask import Blueprint
 
 auth = Blueprint('auth', __name__, 

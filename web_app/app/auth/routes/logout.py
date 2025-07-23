@@ -1,3 +1,7 @@
+"""
+    Ruta de cierre de sesión para usuarios.
+"""
+
 from flask import flash, redirect, session, url_for
 from flask_login import login_required, logout_user
 

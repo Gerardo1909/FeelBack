@@ -1,7 +1,11 @@
-import structlog
+'''
+    Configuración de logging para la aplicación web.
+'''
+
 import logging
 
-# Configuración básica de logging estructurado
+import structlog
+
 logging.basicConfig(
     format="%(message)s",
     stream=None,

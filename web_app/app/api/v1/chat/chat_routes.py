@@ -1,20 +1,19 @@
-from flask import request, jsonify, Blueprint
+"""
+    Módulo de rutas para el chat en la API v1 de FeelBack.
+"""
+
+from flask import Blueprint
+
 from app.api.v1.chat.chat_controller import get_sentiment_response
-from app.api.utils.decorators import token_required
 from app.api.v1.chat.chat_schemas import MessageSchema
-from marshmallow import ValidationError
+from app.utils.decorators import token_required
+from app.utils.requests_handlers import handle_api_client_request
 
-chat_api_blueprint = Blueprint('chat_api', __name__)
+chat_api_blueprint = Blueprint("chat_api", __name__)
 
 
-@chat_api_blueprint.route('/get-sentiment', methods=['POST'])
+@chat_api_blueprint.route("/get-sentiment", methods=["POST"])
 @token_required
 def get_sentiment():
-    data = request.get_json()
-    try:
-        validated_data = MessageSchema().load(data)
-    except ValidationError as err:
-        return jsonify({'error': err.messages}), 400
-
-    response, status = get_sentiment_response(validated_data)
-    return jsonify(response), status
+    """Obtiene la respuesta del modelo de lenguaje para el mensaje del usuario."""
+    return handle_api_client_request(MessageSchema, get_sentiment_response)

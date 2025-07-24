@@ -1,35 +1,26 @@
-from flask import request, jsonify, Blueprint
-from app.api.v1.auth.auth_controller import register_user, login_user, verify_user_token
-from app.api.v1.auth.auth_schemas import RegisterSchema, LoginSchema
-from marshmallow import ValidationError
+"""
+    Módulo de rutas para la autenticación de usuarios en la API v1 de FeelBack.
+"""
+
+from flask import Blueprint, jsonify, request
+
+from app.api.v1.auth.auth_controller import login_user, register_user, verify_user_token
+from app.api.v1.auth.auth_schemas import LoginSchema, RegisterSchema
+from app.utils.requests_handlers import handle_api_client_request
 
 auth_api_blueprint = Blueprint('auth_api', __name__)
-
 
 
 @auth_api_blueprint.route('/register', methods=['POST'])
 def register():
     """Registra un nuevo usuario en feelback"""
-    data = request.get_json()
-    try:
-        validated_data = RegisterSchema().load(data)
-    except ValidationError as err:
-        return jsonify({'error': err.messages}), 400
+    return handle_api_client_request(RegisterSchema, register_user)
 
-    response, status = register_user(validated_data)
-    return jsonify(response), status
 
 @auth_api_blueprint.route('/login', methods=['POST'])
 def login():
     """Inicia sesión un usuario en feelback"""
-    data = request.get_json()
-    try:
-        validated_data = LoginSchema().load(data)
-    except ValidationError as err:
-        return jsonify({'error': err.messages}), 400
-
-    response, status = login_user(validated_data)
-    return jsonify(response), status
+    return handle_api_client_request(LoginSchema, login_user)
 
 
 @auth_api_blueprint.route('/verify-token', methods=['POST'])

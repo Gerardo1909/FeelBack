@@ -1,8 +1,13 @@
+"""
+    Modulo de decoradores comunes utilizados en la app.
+"""
+
 from functools import wraps
 from flask import request, jsonify
 from app.api.v1.auth.auth_service import verify_token
 
 def token_required(f):
+    """Decorador para verificar el token JWT en las solicitudes."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         token = request.headers.get('Authorization')

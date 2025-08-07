@@ -1,9 +1,14 @@
+"""
+    Tests unitarios para las rutas de autenticación.
+"""
+
 import pytest
 from app import create_app, db
 from app.config import Config
 from app.models.user import User
 
 class TestAuthRoutes:
+    """Clase de pruebas para las rutas de autenticación."""
     
     def setup_method(self):
         """Configura el entorno antes de cada prueba."""
@@ -14,7 +19,6 @@ class TestAuthRoutes:
         self.ctx = self.app.app_context()
         self.ctx.push()
     
-
     def teardown_method(self):
         """Limpia el entorno después de cada prueba."""
         
@@ -29,7 +33,6 @@ class TestAuthRoutes:
         
         self.app = None
         self.client = None
-        
 
     def test_register(self):
         """Prueba el endpoint de registro de usuario."""
@@ -42,7 +45,54 @@ class TestAuthRoutes:
         assert response.status_code == 201
         data = response.get_json()
         assert data['message'] == 'Usuario registrado exitosamente'
-        
+
+    def test_register_duplicate_username(self):
+        """Prueba el registro con username duplicado."""
+        # Primer registro
+        self.client.post(f'{Config.API_BASE_URL}/auth/register', json={
+            'username': 'testuser',
+            'email': 'user1@gmail.com',
+            'password': 'testpassword'
+        })
+        # Segundo registro con mismo username
+        response = self.client.post(f'{Config.API_BASE_URL}/auth/register', json={
+            'username': 'testuser',
+            'email': 'user2@gmail.com',
+            'password': 'testpassword'
+        })
+        assert response.status_code == 400
+        data = response.get_json()
+        assert 'error' in data
+        assert 'usuario' in data['error'].lower()
+
+    def test_register_duplicate_email(self):
+        """Prueba el registro con email duplicado."""
+        # Primer registro
+        self.client.post(f'{Config.API_BASE_URL}/auth/register', json={
+            'username': 'user1',
+            'email': 'user@gmail.com',
+            'password': 'testpassword'
+        })
+        # Segundo registro con mismo email
+        response = self.client.post(f'{Config.API_BASE_URL}/auth/register', json={
+            'username': 'user2',
+            'email': 'user@gmail.com',
+            'password': 'testpassword'
+        })
+        assert response.status_code == 400
+        data = response.get_json()
+        assert 'error' in data
+        assert 'email' in data['error'].lower()
+
+    def test_register_missing_fields(self):
+        """Prueba el registro con campos faltantes."""
+        response = self.client.post(f'{Config.API_BASE_URL}/auth/register', json={
+            'username': '',
+            'email': '',
+            'password': ''
+        })
+        assert response.status_code in (400, 422)
+
     def test_login(self, global_user):
         """Prueba el endpoint de inicio de sesión."""
         response = self.client.post(f'{Config.API_BASE_URL}/auth/login', json={
@@ -53,7 +103,25 @@ class TestAuthRoutes:
         data = response.get_json()
         assert 'token' in data
         assert 'user_id' in data
-        
+
+    def test_login_invalid_credentials(self):
+        """Prueba el login con credenciales inválidas."""
+        response = self.client.post(f'{Config.API_BASE_URL}/auth/login', json={
+            'username': 'nouser',
+            'password': 'wrongpass'
+        })
+        assert response.status_code in (401, 400)
+        data = response.get_json()
+        assert 'error' in data
+
+    def test_login_missing_fields(self):
+        """Prueba el login con campos faltantes."""
+        response = self.client.post(f'{Config.API_BASE_URL}/auth/login', json={
+            'username': '',
+            'password': ''
+        })
+        assert response.status_code in (400, 422)
+
     def test_verify_token(self, global_user):
         """Prueba el endpoint de verificación de token."""
         # Iniciamos sesión para obtener un token
@@ -74,3 +142,12 @@ class TestAuthRoutes:
         data = response.get_json()
         assert data['message'] == 'Token válido'
         assert 'user_id' in data
+
+    def test_verify_token_invalid(self):
+        """Prueba la verificación de un token inválido."""
+        response = self.client.post(f'{Config.API_BASE_URL}/auth/verify-token', json={
+            'token': 'invalidtoken'
+        })
+        assert response.status_code in (401, 400)
+        data = response.get_json()
+        assert 'error' in data or 'message' in data

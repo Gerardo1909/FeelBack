@@ -2,7 +2,7 @@
 
 | Estado de Build | Cobertura de Tests |
 |:--------------:|:------------------:|
-| ![Build Status](https://img.shields.io/badge/build-passing-brightgreen) | ![Coverage](https://img.shields.io/badge/coverage-68%25-yellow) |
+| ![Build Status](https://img.shields.io/badge/build-passing-brightgreen) | ![Coverage](https://img.shields.io/badge/coverage-84%25-brightgreen) |
 
 ## Índice
 - [Descripción](#descripción)
